@@ -1,0 +1,2858 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>إتزان — رفيقك الذكي للمهام والطاقة</title>
+
+  <!-- الخط العربي الفاخر: IBM Plex Sans Arabic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =========================================================================
+       متغيرات الهوية البصرية الثنائية (الوضع النهاري الناصع + الكحلي الليلي الفخم)
+       ========================================================================= */
+    :root,
+    [data-theme="light"] {
+      --bg-outer: #E6ECF5;
+      --bg-app: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-card-subtle: #F1F5F9;
+      --bg-dock: rgba(255, 255, 255, 0.86);
+      --border-subtle: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --brand-navy: #14213D;
+      --brand-navy-deep: #0F172A;
+      --brand-navy-soft: #EEF2F6;
+      --accent-coral: #E11D48;
+      --accent-coral-soft: #FFF1F2;
+      --accent-coral-border: rgba(225, 29, 72, 0.24);
+      --accent-emerald: #10B981;
+      --accent-emerald-soft: #ECFDF5;
+      --accent-emerald-text: #047857;
+      --accent-amber: #F59E0B;
+      --accent-amber-soft: #FFFBEB;
+      --accent-amber-text: #B45309;
+      --timeline-line: #E2E8F0;
+      --shadow-card: 0 2px 12px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-elevated: 0 16px 40px rgba(15, 23, 42, 0.12);
+      --orb-shadow: 0 10px 26px rgba(225, 29, 72, 0.36), 0 4px 12px rgba(20, 33, 61, 0.28);
+      --input-bg: #F8FAFC;
+      color-scheme: light;
+    }
+
+    [data-theme="dark"] {
+      --bg-outer: #030712;
+      --bg-app: #070D1F;
+      --bg-card: rgba(17, 28, 54, 0.88);
+      --bg-card-subtle: rgba(30, 45, 82, 0.55);
+      --bg-dock: rgba(13, 23, 46, 0.84);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-muted: #64748B;
+      --brand-navy: #1E2F57;
+      --brand-navy-deep: #F8FAFC;
+      --brand-navy-soft: rgba(255, 255, 255, 0.07);
+      --accent-coral: #F43F5E;
+      --accent-coral-soft: rgba(244, 63, 94, 0.14);
+      --accent-coral-border: rgba(244, 63, 94, 0.32);
+      --accent-emerald: #34D399;
+      --accent-emerald-soft: rgba(52, 211, 153, 0.14);
+      --accent-emerald-text: #6EE7B7;
+      --accent-amber: #FBBF24;
+      --accent-amber-soft: rgba(251, 191, 36, 0.14);
+      --accent-amber-text: #FCD34D;
+      --timeline-line: rgba(255, 255, 255, 0.10);
+      --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
+      --shadow-elevated: 0 24px 60px rgba(0, 0, 0, 0.55);
+      --orb-shadow: 0 10px 30px rgba(244, 63, 94, 0.45), 0 0 0 4px rgba(244, 63, 94, 0.14);
+      --input-bg: rgba(7, 13, 31, 0.72);
+      color-scheme: dark;
+    }
+
+    /* الأساسيات وتجربة اللمس السلسة */
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+      background-color: var(--bg-outer);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    @media (max-width: 767px) {
+      html, body {
+        background-color: var(--bg-app);
+      }
+    }
+
+    .app-shell {
+      background-color: var(--bg-app);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .surface-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    .surface-subtle {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dock-glass {
+      background: var(--bg-dock);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* الكرة الذكية النابضة في الشريط السفلي */
+    .ai-orb {
+      background: linear-gradient(135deg, #14213D 0%, #3A1C4A 48%, #E11D48 100%);
+      box-shadow: var(--orb-shadow);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+    }
+    [data-theme="dark"] .ai-orb {
+      background: linear-gradient(135deg, #1E3A8A 0%, #7E1D5B 48%, #F43F5E 100%);
+    }
+    .ai-orb:active {
+      transform: scale(0.92);
+    }
+
+    @keyframes orbGlow {
+      0%, 100% { transform: scale(1); opacity: 0.45; }
+      50% { transform: scale(1.16); opacity: 0.12; }
+    }
+    .orb-halo {
+      animation: orbGlow 2.8s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+    .pulse-dot {
+      animation: pulseDot 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseUrgent {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.35); }
+      50% { box-shadow: 0 0 0 6px rgba(225, 29, 72, 0); }
+    }
+    .pulse-urgent {
+      animation: pulseUrgent 1.8s infinite;
+    }
+
+    /* موجات الصوت الحية أثناء التسجيل */
+    @keyframes soundWave {
+      0%, 100% { height: 6px; }
+      50% { height: 22px; }
+    }
+    .wave-bar {
+      width: 3px;
+      border-radius: 999px;
+      background-color: var(--accent-coral);
+      animation: soundWave 0.9s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.2s; }
+
+    /* حركات الدخول السلسة */
+    @keyframes sheetUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-sheet {
+      animation: sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes storyBar {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+    .story-progress-fill {
+      animation: storyBar 7s linear forwards;
+    }
+
+    /* حقول الإدخال */
+    .styled-input {
+      background: var(--input-bg);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .styled-input:focus {
+      outline: none;
+      border-color: var(--accent-coral);
+      box-shadow: 0 0 0 3px var(--accent-coral-soft);
+    }
+
+    input[type="date"], input[type="time"] {
+      min-height: 40px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center md:items-center md:py-5 md:px-4 antialiased">
+
+  <!-- =========================================================================
+       إطار التطبيق الرئيسي (ملء الشاشة على الجوال، وإطار آيفون أنيق على اللابتوب)
+       ========================================================================= -->
+  <div id="appFrame" class="app-shell w-full md:max-w-[430px] min-h-screen md:min-h-[820px] md:h-[min(92vh,880px)] md:rounded-[38px] md:border md:border-[var(--border-strong)] md:shadow-2xl flex flex-col relative overflow-hidden">
+
+    <!-- خلفية ضوئية ناعمة جداً في الوضع الليلي -->
+    <div id="nightAmbientGlow" class="pointer-events-none absolute inset-0 overflow-hidden opacity-0 transition-opacity duration-500">
+      <div class="absolute -top-24 -left-16 w-64 h-64 rounded-full bg-[#1E3A8A]/25 blur-3xl"></div>
+      <div class="absolute top-1/3 -right-24 w-56 h-56 rounded-full bg-[#F43F5E]/10 blur-3xl"></div>
+    </div>
+
+    <!-- =======================================================================
+         1. الشريط العلوي النظيف (Header)
+         ======================================================================= -->
+    <header class="relative z-20 px-4 pt-4 pb-2.5 flex items-center justify-between gap-2 shrink-0">
+      <!-- اليمين: الشعار المصغّر والاسم -->
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm relative overflow-hidden shrink-0" style="background: linear-gradient(135deg, #0F172A 0%, #14213D 72%, #E11D48 100%);">
+          <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="6.5" r="2.3" fill="#F43F5E" />
+            <path d="M5 13.5C8.2 11.2 15.8 11.2 19 13.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M12 12V18.5M9 18.5H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight leading-none" style="color: var(--text-primary);">إتزان</h1>
+          <span class="text-[10px] font-medium" style="color: var(--text-muted);">مساعدك الذكي</span>
+        </div>
+      </div>
+
+      <!-- اليسار: 3 أزرار أنيقة فقط بدون زحمة -->
+      <div class="flex items-center gap-1.5">
+        <!-- موجز الصباح -->
+        <button
+          id="openBriefingBtn"
+          type="button"
+          class="surface-card px-2.5 py-2 rounded-full text-[11px] font-semibold flex items-center gap-1 hover:scale-[1.02] active:scale-95"
+          style="color: var(--text-primary);"
+          title="موجز الصباح"
+        >
+          <span>🌅</span>
+          <span class="hidden min-[360px]:inline">موجز</span>
+        </button>
+
+        <!-- المتابعة التفاعلية -->
+        <button
+          id="openFollowupBtn"
+          type="button"
+          class="surface-card relative px-2.5 py-2 rounded-full text-[11px] font-semibold flex items-center gap-1 hover:scale-[1.02] active:scale-95"
+          style="color: var(--text-primary);"
+          title="تجربة المتابعة التفاعلية"
+        >
+          <span>🔔</span>
+          <span>المتابعة</span>
+          <span id="followupPulseDot" class="w-2 h-2 rounded-full pulse-dot absolute -top-0.5 -right-0.5" style="background-color: var(--accent-coral);"></span>
+        </button>
+
+        <!-- تبديل الثيم النهاري / الكحلي الليلي -->
+        <button
+          id="themeToggleBtn"
+          type="button"
+          class="surface-card w-9 h-9 rounded-full flex items-center justify-center text-sm hover:scale-[1.03] active:scale-95"
+          aria-label="تبديل الوضع الليلي والنهاري"
+          title="تبديل المظهر"
+        >
+          <span id="themeToggleIcon">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =======================================================================
+         منطقة التمرير الرئيسية (تتبدل بين تبويب "الجدول" وتبويب "إنجازاتي")
+         ======================================================================= -->
+    <main id="mainScrollArea" class="relative z-10 flex-1 overflow-y-auto no-scrollbar px-4 pt-1 pb-28">
+
+      <!-- =====================================================================
+           التبويب الأول: الجدول (Home Timeline View)
+           ===================================================================== -->
+      <div id="viewTimeline" class="space-y-4">
+
+        <!-- 2. لوحة Bento العلوية المضغوطة (بطاقتان متوازنتان جنباً إلى جنب) -->
+        <section aria-label="لوحة اليوم" class="grid grid-cols-12 gap-2.5">
+          <!-- البطاقة اليمنى: الساعة الرقمية الحية + التحية + التاريخ -->
+          <div class="col-span-7 surface-card rounded-[24px] p-3.5 flex flex-col justify-between min-h-[116px]">
+            <p id="greetingText" class="text-[11px] font-semibold truncate" style="color: var(--text-secondary);">مساء الخير 🌤️</p>
+            <div class="my-1 flex items-baseline gap-1.5">
+              <span id="liveClock" class="text-[24px] font-bold tracking-tight tabular-nums leading-none" style="color: var(--text-primary);" dir="ltr">--:--:--</span>
+              <span id="livePeriod" class="text-xs font-bold" style="color: var(--accent-coral);">--</span>
+            </div>
+            <p id="liveArabicDate" class="text-[11px] font-medium truncate" style="color: var(--text-muted);">جاري التحميل...</p>
+          </div>
+
+          <!-- البطاقة اليسرى: حلقة الإنجاز الدائرية باللون الزمردي -->
+          <div class="col-span-5 surface-card rounded-[24px] p-3 flex flex-col items-center justify-center min-h-[116px]">
+            <div class="relative w-[68px] h-[68px] flex items-center justify-center">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="29" fill="none" stroke="var(--border-subtle)" stroke-width="6" />
+                <circle
+                  id="bentoProgressRing"
+                  cx="36"
+                  cy="36"
+                  r="29"
+                  fill="none"
+                  stroke="var(--accent-emerald)"
+                  stroke-width="6"
+                  stroke-linecap="round"
+                  stroke-dasharray="182.21"
+                  stroke-dashoffset="182.21"
+                  class="transition-all duration-700 ease-out"
+                />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="bentoProgressPct" class="text-sm font-bold tabular-nums leading-none" style="color: var(--text-primary);">0%</span>
+                <span id="bentoProgressCount" class="text-[10px] font-semibold tabular-nums mt-0.5" style="color: var(--accent-emerald);">0/0</span>
+              </div>
+            </div>
+            <span class="text-[10px] font-semibold mt-1" style="color: var(--text-secondary);">إنجاز اليوم</span>
+          </div>
+        </section>
+
+        <!-- 3. رادار الطاقة اليومي (Segmented Pill Bar) -->
+        <section aria-label="رادار الطاقة اليومي" class="space-y-1.5">
+          <div class="flex items-center justify-between px-1">
+            <span class="text-xs font-bold" style="color: var(--text-primary);">طاقتك الحين</span>
+            <span id="energyStatusHint" class="text-[10px] font-semibold" style="color: var(--text-muted);">الترتيب الزمني الطبيعي</span>
+          </div>
+          <div class="surface-subtle p-1 rounded-2xl grid grid-cols-3 gap-1" role="radiogroup" aria-label="مستوى الطاقة">
+            <button type="button" data-energy="high" class="energy-pill py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+              <span>⚡</span><span>متحمّس</span>
+            </button>
+            <button type="button" data-energy="normal" class="energy-pill py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+              <span>☕</span><span>عادي</span>
+            </button>
+            <button type="button" data-energy="low" class="energy-pill py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all active:scale-95">
+              <span>🪫</span><span>مكسّل</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 4. شريط التواريخ الأفقي (7 أيام + الكل + اختيار مخصص) -->
+        <section aria-label="قائمة التواريخ" class="flex items-center gap-2">
+          <div id="dateStrip" class="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            <!-- يُبنى ديناميكياً -->
+          </div>
+          <!-- زر اختيار تاريخ مخصص -->
+          <div class="relative shrink-0">
+            <button
+              type="button"
+              class="surface-card w-11 h-[54px] rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-95"
+              style="color: var(--text-secondary);"
+              aria-label="تاريخ مخصص"
+              title="اختر تاريخاً محدداً"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="3" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span class="text-[9px] font-semibold">تاريخ</span>
+            </button>
+            <input id="customDatePicker" type="date" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" aria-label="اختيار تاريخ مخصص" />
+          </div>
+        </section>
+
+        <!-- 5. الخط الزمني الحي للمهام (أو بطاقة الهدوء في وضع مكسّل) -->
+        <section aria-label="الخط الزمني للمهام" class="space-y-3 pt-0.5">
+          <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2">
+              <h2 id="timelineSectionTitle" class="text-sm font-bold" style="color: var(--text-primary);">جدولك الحي</h2>
+              <span id="pendingCounterBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full tabular-nums" style="background: var(--brand-navy-soft); color: var(--text-secondary);">0</span>
+            </div>
+            <span id="selectedDateBadge" class="text-[11px] font-medium" style="color: var(--text-muted);">كل التواريخ</span>
+          </div>
+
+          <div id="timelineContainer" class="space-y-3" aria-live="polite">
+            <!-- يُبنى ديناميكياً -->
+          </div>
+        </section>
+      </div>
+
+      <!-- =====================================================================
+           التبويب الثاني: إنجازاتي (Achievements & Insights View)
+           ===================================================================== -->
+      <div id="viewAchievements" class="hidden space-y-4 animate-fade-in">
+        <div class="px-1">
+          <h2 class="text-base font-bold" style="color: var(--text-primary);">إنجازاتك وملخصك</h2>
+          <p class="text-xs mt-0.5" style="color: var(--text-muted);">كل خطوة صغيرة تكسر الكسل تصنع فرقاً كبيراً</p>
+        </div>
+
+        <!-- 3 بطاقات إحصائيات أنيقة -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="surface-card rounded-2xl p-3 text-center space-y-1">
+            <span class="text-lg block">✅</span>
+            <span id="statCompletedCount" class="text-xl font-bold tabular-nums block leading-none" style="color: var(--accent-emerald);">0</span>
+            <span class="text-[10px] font-semibold block" style="color: var(--text-muted);">مهمة منجزة</span>
+          </div>
+          <div class="surface-card rounded-2xl p-3 text-center space-y-1">
+            <span class="text-lg block">🎯</span>
+            <span id="statFocusMins" class="text-xl font-bold tabular-nums block leading-none" style="color: var(--text-primary);">0</span>
+            <span class="text-[10px] font-semibold block" style="color: var(--text-muted);">دقيقة تركيز</span>
+          </div>
+          <div class="surface-card rounded-2xl p-3 text-center space-y-1">
+            <span class="text-lg block">🛡️</span>
+            <span id="statRescuedCount" class="text-xl font-bold tabular-nums block leading-none" style="color: var(--accent-amber);">0</span>
+            <span class="text-[10px] font-semibold block" style="color: var(--text-muted);">أُنقذت من النسيان</span>
+          </div>
+        </div>
+
+        <!-- قائمة المهام المنجزة -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-xs font-bold" style="color: var(--text-secondary);">المهام المكتملة</h3>
+            <span id="completedListCount" class="text-[11px] font-semibold tabular-nums" style="color: var(--text-muted);">0</span>
+          </div>
+          <div id="completedTasksList" class="space-y-2">
+            <!-- يُبنى ديناميكياً -->
+          </div>
+        </div>
+
+        <!-- زر لطيف لإعادة ضبط بيانات العرض للهاكاثون -->
+        <div class="pt-3 text-center">
+          <button
+            id="resetDemoBtn"
+            type="button"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all active:scale-95"
+            style="background: var(--brand-navy-soft); color: var(--text-secondary);"
+          >
+            <span>↺</span>
+            <span>إعادة بيانات العرض</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- =======================================================================
+         6. الشريط السفلي الثابت مع الكرة الذكية النابضة (3 عناصر فقط)
+         ======================================================================= -->
+    <nav aria-label="التنقل السفلي" class="fixed md:absolute bottom-3.5 left-1/2 -translate-x-1/2 z-30 w-[calc(100%-28px)] max-w-[398px]">
+      <div class="dock-glass rounded-[28px] px-5 h-[66px] flex items-center justify-between relative">
+        <!-- تبويب 1: الجدول -->
+        <button
+          id="dockTimelineBtn"
+          type="button"
+          class="flex flex-col items-center justify-center gap-0.5 w-20 py-1.5 rounded-2xl transition-all active:scale-95"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="3" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+            <path d="M8 14h4" />
+            <path d="M8 18h8" />
+          </svg>
+          <span class="text-[11px] font-bold">الجدول</span>
+        </button>
+
+        <!-- المنتصف: الكرة الذكية النابضة للتفريغ السريع (AI Capture Orb) -->
+        <div class="relative -top-5 flex items-center justify-center">
+          <span class="orb-halo absolute w-16 h-16 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(225,29,72,0.5) 0%, rgba(20,33,61,0) 70%);"></span>
+          <button
+            id="openCaptureOrbBtn"
+            type="button"
+            class="ai-orb relative w-[60px] h-[60px] rounded-full text-white flex items-center justify-center border-[3px]"
+            style="border-color: var(--bg-app);"
+            aria-label="تفريغ مهمة جديدة بالذكاء الاصطناعي"
+            title="أضف مهمة بالصوت أو الكتابة"
+          >
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- تبويب 2: إنجازاتي -->
+        <button
+          id="dockAchievementsBtn"
+          type="button"
+          class="flex flex-col items-center justify-center gap-0.5 w-20 py-1.5 rounded-2xl transition-all active:scale-95"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.23L7 14.14 2 9.27l7.1-1.01L12 2z" />
+          </svg>
+          <span class="text-[11px] font-bold">إنجازاتي</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- =======================================================================
+         7. نافذة التفريغ السريع السفلية (Quick Capture Bottom Sheet)
+         ======================================================================= -->
+    <div id="captureModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/55 backdrop-blur-[3px] p-0 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="captureTitle">
+      <div class="surface-card w-full max-w-[430px] rounded-t-[30px] sm:rounded-[30px] p-5 pb-6 space-y-4 animate-sheet max-h-[92vh] overflow-y-auto" style="background: var(--bg-card); backdrop-filter: blur(24px);">
+        <div class="w-10 h-1 rounded-full mx-auto opacity-30 sm:hidden" style="background: var(--text-muted);"></div>
+
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 id="captureTitle" class="text-base font-bold" style="color: var(--text-primary);">فرّغ أفكارك في ثوانٍ ✨</h2>
+            <p class="text-[11px]" style="color: var(--text-muted);">اكتب أو تكلّم بعشوائية والذكاء الاصطناعي يرتّبها لك</p>
+          </div>
+          <button id="closeCaptureBtn" type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--brand-navy-soft); color: var(--text-secondary);" aria-label="إغلاق">✕</button>
+        </div>
+
+        <!-- مربع التفريغ + زر مثال عشوائي -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="captureTextarea" class="text-xs font-semibold" style="color: var(--text-secondary);">وش في بالك الحين؟</label>
+            <button id="demoFillBtn" type="button" class="text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors active:scale-95" style="background: var(--brand-navy-soft); color: var(--text-primary);">
+              جرّب مثال عشوائي ✨
+            </button>
+          </div>
+          <textarea
+            id="captureTextarea"
+            rows="3"
+            class="styled-input w-full rounded-2xl p-3.5 text-sm leading-relaxed resize-none"
+            placeholder="اكتب أو تكلّم بأي مهمة أو موعد في بالك بدون ترتيب..."
+          ></textarea>
+
+          <!-- مؤشر الموجات الصوتية الحية عند التسجيل -->
+          <div id="voiceWaveBox" class="hidden rounded-2xl px-3.5 py-2.5 flex items-center justify-between" style="background: var(--accent-coral-soft); border: 1px solid var(--accent-coral-border);">
+            <div class="flex items-center gap-2.5">
+              <div class="flex items-center gap-1 h-6">
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+              </div>
+              <span class="text-xs font-bold" style="color: var(--accent-coral);">أسمعك الآن... تكلّم براحتك</span>
+            </div>
+            <button id="stopVoiceInlineBtn" type="button" class="text-[11px] font-bold px-2.5 py-1 rounded-lg text-white" style="background: var(--accent-coral);">إيقاف</button>
+          </div>
+        </div>
+
+        <!-- تحديد الوقت الاختياري -->
+        <div class="surface-subtle rounded-2xl p-3 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-semibold" style="color: var(--text-secondary);">🕒 تحديد الوقت (اختياري أو اتركه للذكاء الاصطناعي)</span>
+            <button id="clearCaptureTimeBtn" type="button" class="hidden text-[11px] font-bold" style="color: var(--accent-coral);">مسح ×</button>
+          </div>
+
+          <!-- 4 خيارات سريعة بضغطة واحدة -->
+          <div class="grid grid-cols-4 gap-1.5">
+            <button type="button" data-capture-preset="plus1h" class="capture-preset py-1.5 px-1 rounded-xl text-[11px] font-semibold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">بعد ساعة</button>
+            <button type="button" data-capture-preset="morning9" class="capture-preset py-1.5 px-1 rounded-xl text-[11px] font-semibold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">الصباح ٩ ص</button>
+            <button type="button" data-capture-preset="afternoon4" class="capture-preset py-1.5 px-1 rounded-xl text-[11px] font-semibold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">العصر ٤ م</button>
+            <button type="button" data-capture-preset="night9" class="capture-preset py-1.5 px-1 rounded-xl text-[11px] font-semibold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">الليل ٩ م</button>
+          </div>
+
+          <!-- حقول التاريخ والساعة الدقيقة -->
+          <div class="grid grid-cols-2 gap-2">
+            <input id="captureDateInput" type="date" class="styled-input rounded-xl px-2.5 py-1.5 text-xs font-semibold" />
+            <input id="captureTimeInput" type="time" class="styled-input rounded-xl px-2.5 py-1.5 text-xs font-semibold" />
+          </div>
+        </div>
+
+        <!-- أزرار الصوت والترتيب -->
+        <div class="flex items-center gap-2.5 pt-1">
+          <button
+            id="voiceRecordBtn"
+            type="button"
+            class="px-4 py-3.5 rounded-2xl text-white font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-all active:scale-95"
+            style="background: var(--accent-coral);"
+          >
+            <span>🎤</span>
+            <span id="voiceRecordLabel">صوت</span>
+          </button>
+
+          <button
+            id="submitCaptureBtn"
+            type="button"
+            class="flex-1 py-3.5 px-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-60"
+            style="background: linear-gradient(135deg, #0F172A 0%, #14213D 100%);"
+          >
+            <svg id="captureSpinner" class="hidden w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+              <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span id="submitCaptureText">رتّبها بالذكاء الاصطناعي ✨</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         8. نافذة المتابعة التفاعلية (Interactive Follow-Up Modal)
+         ======================================================================= -->
+    <div id="followupModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/55 backdrop-blur-[3px] p-0 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="followupModalHeading">
+      <div class="surface-card w-full max-w-[430px] rounded-t-[30px] sm:rounded-[30px] overflow-hidden animate-sheet max-h-[92vh] overflow-y-auto" style="background: var(--bg-card);">
+        <!-- رأس دافئ -->
+        <div class="px-5 pt-4 pb-4 text-white flex items-center justify-between" style="background: linear-gradient(135deg, #0F172A 0%, #14213D 100%);">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-base" style="background: var(--accent-coral);">💬</div>
+            <div>
+              <h2 id="followupModalHeading" class="text-sm font-bold">المتابعة الذكية</h2>
+              <p class="text-[11px] text-slate-300">نتابع معك بلطف لين تنفّذ</p>
+            </div>
+          </div>
+          <button id="closeFollowupBtn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-bold">✕</button>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <!-- رسالة المساعد -->
+          <div class="surface-subtle rounded-2xl p-3.5 border-r-4 space-y-1.5" style="border-right-color: var(--accent-coral);">
+            <p id="followupAiMessage" class="text-sm font-semibold leading-relaxed" style="color: var(--text-primary);"></p>
+            <p id="followupShrinkNote" class="hidden text-xs font-bold pt-1.5 border-t" style="border-color: var(--border-subtle); color: var(--accent-coral);"></p>
+          </div>
+
+          <!-- ملخص المهمة -->
+          <div class="rounded-2xl p-3.5 border space-y-2" style="border-color: var(--border-subtle); background: var(--bg-app);">
+            <div class="flex items-start justify-between gap-2">
+              <h3 id="followupTaskTitle" class="text-sm font-bold" style="color: var(--text-primary);"></h3>
+              <span id="followupTaskTime" class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0" style="background: var(--brand-navy-soft); color: var(--text-secondary);"></span>
+            </div>
+            <div class="text-xs leading-relaxed flex items-start gap-1.5" style="color: var(--text-secondary);">
+              <span class="font-bold shrink-0" style="color: var(--accent-emerald);">⚡ أول خطوة:</span>
+              <span id="followupTaskStep"></span>
+            </div>
+          </div>
+
+          <!-- 3 أزرار تفاعلية واضحة -->
+          <div class="space-y-2.5">
+            <button id="followupStartBtn" type="button" class="w-full py-3.5 px-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]" style="background: var(--accent-emerald);">
+              <span>بدأت الحين 🚀</span>
+            </button>
+
+            <button id="followupSnoozeToggleBtn" type="button" class="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 border transition-all active:scale-[0.98]" style="background: var(--accent-amber-soft); color: var(--accent-amber-text); border-color: rgba(245,158,11,0.3);">
+              <span>مشغول — رحّلها ⏰</span>
+            </button>
+
+            <!-- شرائح الترحيل السريع -->
+            <div id="followupSnoozePanel" class="hidden surface-subtle rounded-2xl p-3 space-y-2 animate-fade-in">
+              <p class="text-[11px] font-semibold" style="color: var(--text-secondary);">متى يناسبك نرجع لها؟</p>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button type="button" data-followup-snooze="plus1h" class="followup-snooze-chip py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">بعد ساعة</button>
+                <button type="button" data-followup-snooze="night9" class="followup-snooze-chip py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">الليلة ٩ م</button>
+                <button type="button" data-followup-snooze="tomorrow10" class="followup-snooze-chip py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">غداً ١٠ ص</button>
+              </div>
+            </div>
+
+            <button id="followupShrinkBtn" type="button" class="w-full py-3.5 px-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60" style="background: var(--accent-coral);">
+              <svg id="followupShrinkSpinner" class="hidden w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+                <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span id="followupShrinkText">مكسّل — صغّرها لي ⚡</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         9. نفق التركيز (Focus Tunnel Mode — شاشة كاملة خالية من التشتيت)
+         ======================================================================= -->
+    <div id="focusTunnelOverlay" class="fixed inset-0 z-[55] hidden flex-col items-center justify-between p-6 text-white overflow-y-auto" style="background: radial-gradient(circle at 50% 25%, #162447 0%, #070D1F 60%, #040814 100%);">
+      <!-- كانفاس الاحتفال الخفيف (Confetti) -->
+      <canvas id="confettiCanvas" class="pointer-events-none fixed inset-0 w-full h-full z-20"></canvas>
+
+      <!-- الشريط العلوي لنفق التركيز -->
+      <div class="w-full max-w-[400px] flex items-center justify-between relative z-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white/10 border border-white/10 text-emerald-300">
+          <span>🎯</span>
+          <span>نفق التركيز</span>
+        </span>
+        <button id="exitFocusBtn" type="button" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-slate-200 transition-colors">
+          خروج ✕
+        </button>
+      </div>
+
+      <!-- قلب نفق التركيز -->
+      <div class="w-full max-w-[380px] flex flex-col items-center text-center space-y-6 my-auto py-6 relative z-10">
+        <div class="space-y-2">
+          <h2 id="focusTaskTitle" class="text-xl font-bold leading-snug text-white"></h2>
+          <p id="focusTaskStep" class="text-sm text-slate-300 leading-relaxed bg-white/[0.06] border border-white/10 rounded-2xl px-4 py-3"></p>
+        </div>
+
+        <!-- حالة المؤقت النشط -->
+        <div id="focusActiveStage" class="w-full flex flex-col items-center space-y-5">
+          <!-- اختيار المدة السريعة -->
+          <div class="inline-flex items-center gap-1.5 bg-white/[0.07] p-1 rounded-full border border-white/10">
+            <button type="button" data-focus-mins="2" class="focus-dur-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-white text-[#070D1F]">٢ د</button>
+            <button type="button" data-focus-mins="5" class="focus-dur-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition-all text-slate-300 hover:text-white">٥ د</button>
+            <button type="button" data-focus-mins="15" class="focus-dur-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition-all text-slate-300 hover:text-white">١٥ د</button>
+          </div>
+
+          <!-- الحلقة الدائرية الضخمة للوقت -->
+          <div class="relative w-56 h-56 flex items-center justify-center">
+            <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="8" />
+              <circle
+                id="focusRingCircle"
+                cx="70"
+                cy="70"
+                r="60"
+                fill="none"
+                stroke="#34D399"
+                stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="376.99"
+                stroke-dashoffset="0"
+                class="transition-all duration-1000 linear"
+              />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="focusTimerDisplay" class="text-5xl font-bold tabular-nums tracking-tight text-white" dir="ltr">02:00</span>
+              <span id="focusTimerStateLabel" class="text-xs text-emerald-300 font-medium mt-1">ركّز على الخطوة بس</span>
+            </div>
+          </div>
+
+          <!-- أزرار التشغيل وإنهاء الخطوة -->
+          <div class="w-full grid grid-cols-2 gap-3 pt-1">
+            <button id="focusPauseToggleBtn" type="button" class="py-3.5 px-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-sm transition-all active:scale-95">
+              إيقاف مؤقت ⏸
+            </button>
+            <button id="focusStepDoneBtn" type="button" class="py-3.5 px-4 rounded-2xl text-white font-bold text-sm shadow-lg transition-all active:scale-95" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+              تمّت الخطوة 🎉
+            </button>
+          </div>
+        </div>
+
+        <!-- حالة ما بعد إنهاء الخطوة (الاحتفال والسؤال الذكي) -->
+        <div id="focusCelebrationStage" class="hidden w-full bg-white/[0.08] border border-emerald-400/30 rounded-3xl p-5 space-y-4 animate-fade-in">
+          <div class="text-4xl">🎉</div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-bold text-emerald-300">كفو عليك! كسرت حاجز البداية</h3>
+            <p class="text-xs text-slate-300">أصعب شي دايم هو أول دقيقتين.. وش ودّك نسوي الحين؟</p>
+          </div>
+          <div class="space-y-2.5">
+            <button id="focusMarkCompleteBtn" type="button" class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm transition-all active:scale-95">
+              أنجزت المهمة بالكامل ✅
+            </button>
+            <button id="focusExtend5Btn" type="button" class="w-full py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-sm transition-all active:scale-95">
+              متحمّس! كمّل ٥ دقايق زيادة 🔥
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-slate-500 relative z-10">مهامي • مساحة تركيز خالية من التشتيت</p>
+    </div>
+
+    <!-- =======================================================================
+         10. موجز الصباح (Morning Briefing Story Modal)
+         ======================================================================= -->
+    <div id="briefingModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-md p-4" role="dialog" aria-modal="true" aria-labelledby="briefingHeading">
+      <div class="w-full max-w-[390px] rounded-[32px] overflow-hidden shadow-2xl border border-white/15 text-white animate-sheet relative" style="background: linear-gradient(160deg, #0F172A 0%, #14213D 55%, #2D1436 100%);">
+        <!-- شريط قصة علوي -->
+        <div class="px-4 pt-3.5 flex items-center gap-1.5">
+          <div class="flex-1 h-1 rounded-full bg-white/20 overflow-hidden">
+            <div id="briefingStoryBar" class="h-full bg-white rounded-full"></div>
+          </div>
+          <button id="closeBriefingBtn" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">✕</button>
+        </div>
+
+        <div class="p-6 space-y-5">
+          <div class="space-y-1.5">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/10 text-amber-300">
+              <span>🌅</span>
+              <span>موجزك الذكي</span>
+            </span>
+            <h2 id="briefingHeading" class="text-2xl font-bold leading-snug pt-1">أهلاً بك في يوم جديد</h2>
+            <p id="briefingSummaryText" class="text-sm text-slate-300 leading-relaxed"></p>
+          </div>
+
+          <!-- أسهل خطوة للبدء -->
+          <div class="rounded-2xl p-4 bg-white/[0.08] border border-white/10 space-y-1.5">
+            <span class="text-[11px] font-bold text-emerald-300">✨ أسهل فوز سريع (دقيقتين فقط):</span>
+            <p id="briefingEasyTaskTitle" class="text-sm font-bold text-white"></p>
+            <p id="briefingEasyTaskStep" class="text-xs text-slate-300 leading-relaxed"></p>
+          </div>
+
+          <!-- اختيار الطاقة للدخول مباشرة -->
+          <div class="space-y-2.5 pt-1">
+            <p class="text-xs font-bold text-slate-200 text-center">كيف طاقتك اليوم عشان نرتّب لك الشاشة على مقاسك؟</p>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-briefing-energy="high" class="briefing-energy-btn py-3.5 px-2 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/30 flex flex-col items-center gap-1 transition-all active:scale-95">
+                <span class="text-xl">⚡</span>
+                <span class="text-xs font-bold text-white">متحمّس</span>
+              </button>
+              <button type="button" data-briefing-energy="normal" class="briefing-energy-btn py-3.5 px-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 flex flex-col items-center gap-1 transition-all active:scale-95">
+                <span class="text-xl">☕</span>
+                <span class="text-xs font-bold text-white">عادي</span>
+              </button>
+              <button type="button" data-briefing-energy="low" class="briefing-energy-btn py-3.5 px-2 rounded-2xl bg-rose-500/20 hover:bg-rose-500/35 border border-rose-400/30 flex flex-col items-center gap-1 transition-all active:scale-95">
+                <span class="text-xl">🪫</span>
+                <span class="text-xs font-bold text-white">مكسّل</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         11. نافذة التعديل السريع للوقت / الترحيل (Inline Popover Bottom Sheet)
+         ======================================================================= -->
+    <div id="timePopoverModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/50 backdrop-blur-[2px] p-0 sm:p-4" role="dialog" aria-modal="true">
+      <div class="surface-card w-full max-w-[420px] rounded-t-[28px] sm:rounded-[28px] p-5 space-y-4 animate-sheet" style="background: var(--bg-card);">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="timePopoverHeading" class="text-sm font-bold" style="color: var(--text-primary);">🕒 تعديل موعد المهمة</h3>
+            <p id="timePopoverTaskName" class="text-xs mt-0.5 truncate max-w-[270px]" style="color: var(--text-muted);"></p>
+          </div>
+          <button id="closeTimePopoverBtn" type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background: var(--brand-navy-soft); color: var(--text-secondary);">✕</button>
+        </div>
+
+        <!-- خيارات سريعة -->
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" data-time-preset="plus30m" class="time-preset-btn py-2.5 px-3 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-app); border-color: var(--border-subtle); color: var(--text-primary);">بعد ٣٠ دقيقة</button>
+          <button type="button" data-time-preset="plus1h" class="time-preset-btn py-2.5 px-3 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-app); border-color: var(--border-subtle); color: var(--text-primary);">بعد ساعة</button>
+          <button type="button" data-time-preset="night9" class="time-preset-btn py-2.5 px-3 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-app); border-color: var(--border-subtle); color: var(--text-primary);">الليلة ٩:٠٠ م</button>
+          <button type="button" data-time-preset="tomorrow10" class="time-preset-btn py-2.5 px-3 rounded-xl text-xs font-bold border transition-all active:scale-95" style="background: var(--bg-app); border-color: var(--border-subtle); color: var(--text-primary);">غداً ١٠:٠٠ ص</button>
+        </div>
+
+        <!-- اختيار دقيق -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="popoverDateInput" class="block text-[11px] font-semibold mb-1" style="color: var(--text-secondary);">التاريخ</label>
+            <input id="popoverDateInput" type="date" class="styled-input w-full rounded-xl px-2.5 py-1.5 text-xs font-semibold" />
+          </div>
+          <div>
+            <label for="popoverTimeInput" class="block text-[11px] font-semibold mb-1" style="color: var(--text-secondary);">الساعة</label>
+            <input id="popoverTimeInput" type="time" class="styled-input w-full rounded-xl px-2.5 py-1.5 text-xs font-semibold" />
+          </div>
+        </div>
+
+        <button id="savePopoverTimeBtn" type="button" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all active:scale-95" style="background: linear-gradient(135deg, #0F172A 0%, #14213D 100%);">
+          حفظ الموعد وتحديث العداد
+        </button>
+      </div>
+    </div>
+
+    <!-- حاوية التنبيهات اللطيفة (Toasts) -->
+    <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[70] w-[90%] max-w-[380px] space-y-2 pointer-events-none"></div>
+  </div>
+
+  <!-- =========================================================================
+       المنطق البرمجي الكامل لتطبيق مهامي (AI + العدادات + الطاقة + كاشف التسويف)
+       ========================================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =======================================================================
+      // 1. الثوابت وإعدادات Gemini API
+      // =======================================================================
+      const STORAGE_TASKS_KEY = 'mahami_award_tasks_v3';
+      const STORAGE_STATS_KEY = 'mahami_award_stats_v3';
+      const STORAGE_THEME_KEY = 'mahami_award_theme_v3';
+
+      const apiKey = ''; // يُزوّد تلقائياً في بيئة التشغيل
+      const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const ARABIC_DAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+      const ARABIC_MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+      const DEMO_BRAIN_DUMPS = [
+        'لازم أراجع سلايدات الذكاء الاصطناعي بعد ساعة ونص، وأرسل ملف المشروع للدكتور الليلة الساعة ٩، وعندي موعد أسنان بكرة العصر الساعة ٤',
+        'أبي أصلّح خطأ الكود في الواجهة بعد ساعتين، وأجهز شرائح العرض بكرة الصبح الساعة ١٠، وأشتري قهوة للمذاكرة اليوم',
+        'عندي تسليم واجب الشبكات بكرة الساعة ٥ العصر، ولازم أنظف ملفات GitHub الليلة، وأتصل على الوالد بعد ساعة'
+      ];
+      let demoDumpIndex = 0;
+
+      // =======================================================================
+      // 2. حالة التطبيق (Application State)
+      // =======================================================================
+      let tasks = [];
+      let stats = { focusMinutes: 14, snoozedRescued: 2 };
+      let currentTheme = 'light';
+      let activeNavTab = 'timeline'; // 'timeline' | 'achievements'
+      let energyMode = 'normal'; // 'high' | 'normal' | 'low'
+      let selectedDateKey = 'all'; // 'all' | 'YYYY-MM-DD'
+      let showRemainingInZen = false;
+
+      // حالات النوافذ النشطة
+      let activeFollowupTaskId = null;
+      let activeFocusTaskId = null;
+      let activePopoverTaskId = null;
+      let popoverCountsAsSnooze = false;
+
+      // حالة مؤقت نفق التركيز
+      const FOCUS_RING_CIRCUMFERENCE = 2 * Math.PI * 60;
+      let focusDurationSec = 120;
+      let focusRemainingSec = 120;
+      let focusPaused = false;
+      let focusInterval = null;
+
+      // حالة التسجيل الصوتي
+      let speechRec = null;
+      let isRecording = false;
+      let textBeforeVoice = '';
+
+      // =======================================================================
+      // 3. أدوات التاريخ والوقت المحلي (Local-Safe Helpers)
+      // =======================================================================
+      const pad2 = (n) => String(n).padStart(2, '0');
+
+      function getLocalDateKey(msOrDate) {
+        const d = msOrDate instanceof Date ? msOrDate : new Date(msOrDate);
+        return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+      }
+
+      function getLocalTimeKey(msOrDate) {
+        const d = msOrDate instanceof Date ? msOrDate : new Date(msOrDate);
+        return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+      }
+
+      function combineDateAndTime(dateKey, timeKey) {
+        if (!dateKey) return Date.now() + 3600000;
+        const [y, m, d] = dateKey.split('-').map(Number);
+        const [hh, mm] = (timeKey || '12:00').split(':').map(Number);
+        return new Date(y, m - 1, d, isNaN(hh) ? 12 : hh, isNaN(mm) ? 0 : mm, 0, 0).getTime();
+      }
+
+      function formatArabic12h(ms) {
+        const d = new Date(ms);
+        const h = d.getHours();
+        const period = h >= 12 ? 'م' : 'ص';
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+        return `${h12}:${pad2(d.getMinutes())} ${period}`;
+      }
+
+      function formatFriendlyDate(dateKey) {
+        if (!dateKey || dateKey === 'all') return 'كل التواريخ';
+        const todayKey = getLocalDateKey(Date.now());
+        const tom = new Date();
+        tom.setDate(tom.getDate() + 1);
+        const tomKey = getLocalDateKey(tom);
+
+        if (dateKey === todayKey) return 'اليوم';
+        if (dateKey === tomKey) return 'غداً';
+
+        const dt = new Date(combineDateAndTime(dateKey, '12:00'));
+        return `${ARABIC_DAYS[dt.getDay()]} ${dt.getDate()} ${ARABIC_MONTHS[dt.getMonth()]}`;
+      }
+
+      function computePresetMs(preset) {
+        const now = new Date();
+        const target = new Date(now.getTime());
+
+        if (preset === 'plus30m') {
+          target.setMinutes(target.getMinutes() + 30);
+        } else if (preset === 'plus1h') {
+          target.setHours(target.getHours() + 1);
+        } else if (preset === 'morning9') {
+          target.setHours(9, 0, 0, 0);
+          if (target.getTime() <= now.getTime()) target.setDate(target.getDate() + 1);
+        } else if (preset === 'afternoon4') {
+          target.setHours(16, 0, 0, 0);
+          if (target.getTime() <= now.getTime()) target.setDate(target.getDate() + 1);
+        } else if (preset === 'night9') {
+          target.setHours(21, 0, 0, 0);
+          if (target.getTime() <= now.getTime()) target.setDate(target.getDate() + 1);
+        } else if (preset === 'tomorrow10') {
+          target.setDate(target.getDate() + 1);
+          target.setHours(10, 0, 0, 0);
+        }
+        return target.getTime();
+      }
+
+      function escapeHTML(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      // =======================================================================
+      // 4. البيانات التجريبية النسبية للوقت الحالي (Pre-Loaded Demo Data)
+      // =======================================================================
+      function buildDemoTasks() {
+        const now = Date.now();
+        return [
+          {
+            id: 'demo_1',
+            title: 'تعديل كود مشروع الجامعة',
+            dueAt: now + 42 * 60 * 1000, // بعد 42 دقيقة -> عداد أحمر نابض!
+            effort: 'high',
+            snoozeCount: 1,
+            tinyFirstStep: 'شغّل المشروع وراجع دالة الدخول فقط (دقيقتين)',
+            checkinMessage: 'أمس قلت تبي تعدّل كود مشروع الجامعة وباقي له أقل من ساعة — عندك دقيقتين الحين نشغّل المشروع ونبدأ، ولا متى تفضى اليوم؟',
+            status: 'pending',
+            subSteps: [],
+            completedAt: null,
+          },
+          {
+            id: 'demo_2',
+            title: 'مذاكرة شابتر 4 - ذكاء اصطناعي',
+            dueAt: now + (4 * 60 + 20) * 60 * 1000, // بعد 4 ساعات و20 دقيقة -> عداد كهرماني + كاشف التسويف ظاهر فوراً!
+            effort: 'high',
+            snoozeCount: 2,
+            tinyFirstStep: 'افتح ملف الشابتر واقرأ أول صفحتين بس',
+            checkinMessage: 'لاحظت إن مذاكرة شابتر 4 تأجلت مرتين.. تبي نمسك أول صفحتين بس في دقيقتين عشان نكسر الحاجز؟',
+            status: 'pending',
+            subSteps: [],
+            completedAt: null,
+          },
+          {
+            id: 'demo_3',
+            title: 'موعد مراجعة وتسليم التقرير',
+            dueAt: now + 18 * 60 * 60 * 1000, // بعد 18 ساعة -> عداد كهرماني ضمن 24 ساعة
+            effort: 'medium',
+            snoozeCount: 0,
+            tinyFirstStep: 'جهّز ملف PDF وتأكد من كتابة الأسماء',
+            checkinMessage: 'موعد مراجعة وتسليم التقرير قرب — نجهّز ملف الـ PDF الحين في دقيقتين عشان تنام مرتاح؟',
+            status: 'pending',
+            subSteps: [],
+            completedAt: null,
+          },
+          {
+            id: 'demo_4',
+            title: 'تجهيز نقاط عرض الهاكاثون',
+            dueAt: now + 48 * 60 * 60 * 1000, // بعد يومين -> بدون عداد 24 ساعة
+            effort: 'low',
+            snoozeCount: 0,
+            tinyFirstStep: 'اكتب 3 جمل تلخص مشكلة التطبيق',
+            checkinMessage: 'عندك تجهيز نقاط عرض الهاكاثون — تبي نكتب 3 جمل سريعة الحين ونختصرها عليك؟',
+            status: 'pending',
+            subSteps: [],
+            completedAt: null,
+          },
+          {
+            id: 'demo_5',
+            title: 'مراجعة ملاحظات المحاضرة',
+            dueAt: now - 2 * 60 * 60 * 1000,
+            effort: 'low',
+            snoozeCount: 0,
+            tinyFirstStep: 'تصفح أبرز النقاط اللي حددها الدكتور',
+            checkinMessage: 'ممتاز أنجزت مراجعة ملاحظات المحاضرة!',
+            status: 'completed',
+            subSteps: [],
+            completedAt: now - 45 * 60 * 1000,
+          },
+        ];
+      }
+
+      // =======================================================================
+      // 5. التخزين المحلي (localStorage)
+      // =======================================================================
+      function loadState() {
+        try {
+          const rawTasks = localStorage.getItem(STORAGE_TASKS_KEY);
+          if (rawTasks) {
+            const parsed = JSON.parse(rawTasks);
+            tasks = Array.isArray(parsed) && parsed.length > 0 ? parsed : buildDemoTasks();
+          } else {
+            tasks = buildDemoTasks();
+            saveTasks();
+          }
+        } catch (e) {
+          tasks = buildDemoTasks();
+        }
+
+        try {
+          const rawStats = localStorage.getItem(STORAGE_STATS_KEY);
+          if (rawStats) stats = { ...stats, ...JSON.parse(rawStats) };
+        } catch (e) {}
+
+        try {
+          const savedTheme = localStorage.getItem(STORAGE_THEME_KEY);
+          if (savedTheme === 'dark' || savedTheme === 'light') {
+            currentTheme = savedTheme;
+          }
+        } catch (e) {}
+        applyTheme(currentTheme, false);
+      }
+
+      function saveTasks() {
+        try { localStorage.setItem(STORAGE_TASKS_KEY, JSON.stringify(tasks)); } catch (e) {}
+      }
+
+      function saveStats() {
+        try { localStorage.setItem(STORAGE_STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+      }
+
+      function applyTheme(theme, persist = true) {
+        currentTheme = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        el.themeToggleIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        el.nightAmbientGlow.style.opacity = theme === 'dark' ? '1' : '0';
+        if (persist) {
+          try { localStorage.setItem(STORAGE_THEME_KEY, theme); } catch (e) {}
+        }
+      }
+
+      // =======================================================================
+      // 6. عناصر DOM
+      // =======================================================================
+      const el = {
+        nightAmbientGlow: document.getElementById('nightAmbientGlow'),
+        openBriefingBtn: document.getElementById('openBriefingBtn'),
+        openFollowupBtn: document.getElementById('openFollowupBtn'),
+        followupPulseDot: document.getElementById('followupPulseDot'),
+        themeToggleBtn: document.getElementById('themeToggleBtn'),
+        themeToggleIcon: document.getElementById('themeToggleIcon'),
+
+        viewTimeline: document.getElementById('viewTimeline'),
+        viewAchievements: document.getElementById('viewAchievements'),
+
+        greetingText: document.getElementById('greetingText'),
+        liveClock: document.getElementById('liveClock'),
+        livePeriod: document.getElementById('livePeriod'),
+        liveArabicDate: document.getElementById('liveArabicDate'),
+        bentoProgressRing: document.getElementById('bentoProgressRing'),
+        bentoProgressPct: document.getElementById('bentoProgressPct'),
+        bentoProgressCount: document.getElementById('bentoProgressCount'),
+
+        energyStatusHint: document.getElementById('energyStatusHint'),
+        dateStrip: document.getElementById('dateStrip'),
+        customDatePicker: document.getElementById('customDatePicker'),
+        timelineSectionTitle: document.getElementById('timelineSectionTitle'),
+        pendingCounterBadge: document.getElementById('pendingCounterBadge'),
+        selectedDateBadge: document.getElementById('selectedDateBadge'),
+        timelineContainer: document.getElementById('timelineContainer'),
+
+        statCompletedCount: document.getElementById('statCompletedCount'),
+        statFocusMins: document.getElementById('statFocusMins'),
+        statRescuedCount: document.getElementById('statRescuedCount'),
+        completedListCount: document.getElementById('completedListCount'),
+        completedTasksList: document.getElementById('completedTasksList'),
+        resetDemoBtn: document.getElementById('resetDemoBtn'),
+
+        dockTimelineBtn: document.getElementById('dockTimelineBtn'),
+        dockAchievementsBtn: document.getElementById('dockAchievementsBtn'),
+        openCaptureOrbBtn: document.getElementById('openCaptureOrbBtn'),
+
+        // Capture Bottom Sheet
+        captureModal: document.getElementById('captureModal'),
+        closeCaptureBtn: document.getElementById('closeCaptureBtn'),
+        demoFillBtn: document.getElementById('demoFillBtn'),
+        captureTextarea: document.getElementById('captureTextarea'),
+        voiceWaveBox: document.getElementById('voiceWaveBox'),
+        stopVoiceInlineBtn: document.getElementById('stopVoiceInlineBtn'),
+        clearCaptureTimeBtn: document.getElementById('clearCaptureTimeBtn'),
+        captureDateInput: document.getElementById('captureDateInput'),
+        captureTimeInput: document.getElementById('captureTimeInput'),
+        voiceRecordBtn: document.getElementById('voiceRecordBtn'),
+        voiceRecordLabel: document.getElementById('voiceRecordLabel'),
+        submitCaptureBtn: document.getElementById('submitCaptureBtn'),
+        captureSpinner: document.getElementById('captureSpinner'),
+        submitCaptureText: document.getElementById('submitCaptureText'),
+
+        // Follow-up Modal
+        followupModal: document.getElementById('followupModal'),
+        closeFollowupBtn: document.getElementById('closeFollowupBtn'),
+        followupAiMessage: document.getElementById('followupAiMessage'),
+        followupShrinkNote: document.getElementById('followupShrinkNote'),
+        followupTaskTitle: document.getElementById('followupTaskTitle'),
+        followupTaskTime: document.getElementById('followupTaskTime'),
+        followupTaskStep: document.getElementById('followupTaskStep'),
+        followupStartBtn: document.getElementById('followupStartBtn'),
+        followupSnoozeToggleBtn: document.getElementById('followupSnoozeToggleBtn'),
+        followupSnoozePanel: document.getElementById('followupSnoozePanel'),
+        followupShrinkBtn: document.getElementById('followupShrinkBtn'),
+        followupShrinkSpinner: document.getElementById('followupShrinkSpinner'),
+        followupShrinkText: document.getElementById('followupShrinkText'),
+
+        // Focus Tunnel
+        focusTunnelOverlay: document.getElementById('focusTunnelOverlay'),
+        confettiCanvas: document.getElementById('confettiCanvas'),
+        exitFocusBtn: document.getElementById('exitFocusBtn'),
+        focusTaskTitle: document.getElementById('focusTaskTitle'),
+        focusTaskStep: document.getElementById('focusTaskStep'),
+        focusActiveStage: document.getElementById('focusActiveStage'),
+        focusCelebrationStage: document.getElementById('focusCelebrationStage'),
+        focusRingCircle: document.getElementById('focusRingCircle'),
+        focusTimerDisplay: document.getElementById('focusTimerDisplay'),
+        focusTimerStateLabel: document.getElementById('focusTimerStateLabel'),
+        focusPauseToggleBtn: document.getElementById('focusPauseToggleBtn'),
+        focusStepDoneBtn: document.getElementById('focusStepDoneBtn'),
+        focusMarkCompleteBtn: document.getElementById('focusMarkCompleteBtn'),
+        focusExtend5Btn: document.getElementById('focusExtend5Btn'),
+
+        // Morning Briefing
+        briefingModal: document.getElementById('briefingModal'),
+        briefingStoryBar: document.getElementById('briefingStoryBar'),
+        closeBriefingBtn: document.getElementById('closeBriefingBtn'),
+        briefingHeading: document.getElementById('briefingHeading'),
+        briefingSummaryText: document.getElementById('briefingSummaryText'),
+        briefingEasyTaskTitle: document.getElementById('briefingEasyTaskTitle'),
+        briefingEasyTaskStep: document.getElementById('briefingEasyTaskStep'),
+
+        // Time Popover
+        timePopoverModal: document.getElementById('timePopoverModal'),
+        timePopoverHeading: document.getElementById('timePopoverHeading'),
+        timePopoverTaskName: document.getElementById('timePopoverTaskName'),
+        closeTimePopoverBtn: document.getElementById('closeTimePopoverBtn'),
+        popoverDateInput: document.getElementById('popoverDateInput'),
+        popoverTimeInput: document.getElementById('popoverTimeInput'),
+        savePopoverTimeBtn: document.getElementById('savePopoverTimeBtn'),
+
+        toastContainer: document.getElementById('toastContainer'),
+      };
+
+      // =======================================================================
+      // 7. التنبيهات الفورية اللطيفة (Toasts — بدون alert أو confirm)
+      // =======================================================================
+      function showToast(message, tone = 'navy') {
+        const bgMap = {
+          navy: 'background:#0F172A; color:#F8FAFC; border:1px solid rgba(255,255,255,0.12);',
+          emerald: 'background:#059669; color:#FFFFFF;',
+          amber: 'background:#D97706; color:#FFFFFF;',
+          coral: 'background:#E11D48; color:#FFFFFF;',
+        };
+        const item = document.createElement('div');
+        item.className = 'pointer-events-auto px-4 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center justify-between gap-2 animate-fade-in';
+        item.setAttribute('style', bgMap[tone] || bgMap.navy);
+        item.innerHTML = `<span class="leading-relaxed">${escapeHTML(message)}</span><button type="button" class="opacity-80 hover:opacity-100 px-1">✕</button>`;
+
+        const dismiss = () => {
+          item.style.opacity = '0';
+          item.style.transform = 'translateY(-8px)';
+          item.style.transition = 'all 0.2s ease';
+          setTimeout(() => item.remove(), 210);
+        };
+        item.querySelector('button').addEventListener('click', dismiss);
+        el.toastContainer.appendChild(item);
+        setTimeout(dismiss, 3400);
+      }
+
+      // =======================================================================
+      // 8. الساعة الحية + العدادات التنازلية التلقائية (<= 24 ساعة)
+      // =======================================================================
+      function getCountdownState(dueAt, nowMs = Date.now()) {
+        const diff = dueAt - nowMs;
+        const H24 = 24 * 60 * 60 * 1000;
+        const H1 = 60 * 60 * 1000;
+
+        if (diff > H24) return { visible: false };
+
+        if (diff <= 0) {
+          return {
+            visible: true,
+            urgent: true,
+            style: 'background: var(--accent-coral-soft); color: var(--accent-coral); border-color: var(--accent-coral-border);',
+            extraClass: 'pulse-urgent',
+            html: '<span>🔔</span><span>حان وقتها الآن</span>',
+          };
+        }
+
+        const totalSec = Math.floor(diff / 1000);
+        const hh = Math.floor(totalSec / 3600);
+        const mm = Math.floor((totalSec % 3600) / 60);
+        const ss = totalSec % 60;
+        const clockStr = `${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`;
+
+        if (diff < H1) {
+          return {
+            visible: true,
+            urgent: true,
+            style: 'background: var(--accent-coral-soft); color: var(--accent-coral); border-color: var(--accent-coral-border);',
+            extraClass: 'pulse-urgent',
+            html: `<span>🔥</span><span>باقي</span><span dir="ltr">${clockStr}</span>`,
+          };
+        }
+
+        return {
+          visible: true,
+          urgent: false,
+          style: 'background: var(--accent-amber-soft); color: var(--accent-amber-text); border-color: rgba(245,158,11,0.3);',
+          extraClass: '',
+          html: `<span>⏳</span><span>باقي</span><span dir="ltr">${clockStr}</span>`,
+        };
+      }
+
+      function tickClockAndCountdowns() {
+        const now = new Date();
+        const nowMs = now.getTime();
+        const h = now.getHours();
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+
+        el.liveClock.textContent = `${pad2(h12)}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
+        el.livePeriod.textContent = h >= 12 ? 'م' : 'ص';
+        el.liveArabicDate.textContent = `${ARABIC_DAYS[now.getDay()]}، ${now.getDate()} ${ARABIC_MONTHS[now.getMonth()]}`;
+
+        if (h >= 5 && h < 12) {
+          el.greetingText.textContent = 'صباح الخير ☀️';
+        } else if (h >= 12 && h < 19) {
+          el.greetingText.textContent = 'مساء الخير 🌤️';
+        } else {
+          el.greetingText.textContent = 'وقت تخطيط الليل 🌙';
+        }
+
+        // تحديث جميع العدادات التنازلية مباشرة بدون إعادة رسم القائمة
+        document.querySelectorAll('[data-countdown-id]').forEach((badge) => {
+          const id = badge.getAttribute('data-countdown-id');
+          const task = tasks.find((t) => t.id === id);
+          if (!task || task.status === 'completed') {
+            badge.classList.add('hidden');
+            return;
+          }
+          const state = getCountdownState(task.dueAt, nowMs);
+          if (!state.visible) {
+            badge.classList.add('hidden');
+          } else {
+            badge.classList.remove('hidden');
+            badge.className = `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border tabular-nums ${state.extraClass}`;
+            badge.setAttribute('style', state.style);
+            badge.innerHTML = state.html;
+          }
+        });
+      }
+
+      // =======================================================================
+      // 9. طبقة الذكاء الاصطناعي (Gemini API مع Exponential Backoff + بديل محلي فوري)
+      // =======================================================================
+      async function fetchGeminiWithBackoff(payload, maxRetries = 3) {
+        let wait = 1000;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            const res = await fetch(GEMINI_ENDPOINT, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+              const json = await res.json();
+              const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) return text;
+              throw new Error('Empty response');
+            }
+            if ((res.status === 429 || res.status >= 500) && attempt < maxRetries) {
+              await new Promise((r) => setTimeout(r, wait));
+              wait *= 2;
+              continue;
+            }
+            throw new Error(`Status ${res.status}`);
+          } catch (err) {
+            if (attempt < maxRetries) {
+              await new Promise((r) => setTimeout(r, wait));
+              wait *= 2;
+              continue;
+            }
+            throw err;
+          }
+        }
+      }
+
+      function safeParseJson(raw) {
+        const cleaned = String(raw || '').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+        return JSON.parse(cleaned);
+      }
+
+      // 9.1 تحليل النص العشوائي إلى مهام منظمة
+      async function aiParseBrainDump(rawText, manualDate, manualTime) {
+        const now = new Date();
+        const todayStr = getLocalDateKey(now);
+        const timeStr = getLocalTimeKey(now);
+
+        const systemPrompt = `أنت المساعد الذكي في تطبيق "مهامي". مهمتك استخراج المهام والمواعيد من نص عربي عشوائي وتحويلها إلى مصفوفة JSON نظيفة.
+الوقت الحالي: ${ARABIC_DAYS[now.getDay()]} ${todayStr} الساعة ${timeStr}.
+${manualDate ? `التاريخ المختار يدوياً: ${manualDate}.` : ''}
+${manualTime ? `الساعة المختارة يدوياً: ${manualTime}.` : ''}
+أرجع مصفوفة JSON فقط حيث كل عنصر يحتوي على:
+- title: عنوان مختصر واضح (3 إلى 7 كلمات).
+- dueDate: التاريخ بصيغة YYYY-MM-DD.
+- dueTime: الساعة بصيغة 24 ساعة HH:MM.
+- effort: "high" أو "medium" أو "low".
+- tinyFirstStep: أصغر خطوة أولى سهلة جداً تستغرق دقيقتين لكسر الكسل.
+- checkinMessage: رسالة متابعة ودودة بلهجة بيضاء خفيفة.`;
+
+        const payload = {
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ parts: [{ text: rawText }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'ARRAY',
+              items: {
+                type: 'OBJECT',
+                properties: {
+                  title: { type: 'STRING' },
+                  dueDate: { type: 'STRING' },
+                  dueTime: { type: 'STRING' },
+                  effort: { type: 'STRING', enum: ['high', 'medium', 'low'] },
+                  tinyFirstStep: { type: 'STRING' },
+                  checkinMessage: { type: 'STRING' },
+                },
+                required: ['title', 'dueDate', 'dueTime', 'effort', 'tinyFirstStep', 'checkinMessage'],
+              },
+            },
+          },
+        };
+
+        try {
+          const text = await fetchGeminiWithBackoff(payload, 2);
+          const list = safeParseJson(text);
+          if (Array.isArray(list) && list.length > 0) {
+            return list.map((item) => {
+              const dKey = /^\d{4}-\d{2}-\d{2}$/.test(item.dueDate) ? item.dueDate : (manualDate || todayStr);
+              const tKey = /^\d{2}:\d{2}$/.test(item.dueTime) ? item.dueTime : (manualTime || getLocalTimeKey(Date.now() + 2 * 3600000));
+              return {
+                title: item.title || 'مهمة جديدة',
+                dueAt: combineDateAndTime(dKey, tKey),
+                effort: ['high', 'medium', 'low'].includes(item.effort) ? item.effort : 'medium',
+                tinyFirstStep: item.tinyFirstStep || 'ابدأ بأول دقيقتين فقط لكسر الحاجز',
+                checkinMessage: item.checkinMessage || `سجّلت «${item.title}» — جاهز نمسك أول خطوة الحين؟`,
+              };
+            });
+          }
+          throw new Error('Empty parsed tasks');
+        } catch (err) {
+          return localArabicSmartParser(rawText, manualDate, manualTime);
+        }
+      }
+
+      function normalizeDigits(str) {
+        return str.replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      }
+
+      function localArabicSmartParser(rawText, manualDate, manualTime) {
+        const normalized = normalizeDigits(rawText);
+        const split = normalized
+          .replace(/[،,;\n]+/g, '|')
+          .replace(/\s+(?:ولازم|وعندي|وأبي|وابي|وأرسل|وارسل|وأراجع|واراجع|وأجهز|واجهز|وأشتري|واشتري|وأتصل|واتصل|وبكرة|وغداً)\s+/g, (m) => '|' + m.trim().replace(/^و/, '') + ' ');
+
+        let parts = split.split('|').map((s) => s.trim()).filter((s) => s.length >= 3);
+        if (parts.length === 0) parts = [normalized.trim()];
+
+        const now = new Date();
+        return parts.map((seg, i) => {
+          const target = new Date(now.getTime());
+          let dKey = manualDate || null;
+          let tKey = manualTime || null;
+
+          if (/بعد\s*ساعة\s*ونص/.test(seg)) {
+            target.setMinutes(target.getMinutes() + 90);
+            dKey = dKey || getLocalDateKey(target);
+            tKey = tKey || getLocalTimeKey(target);
+          } else if (/بعد\s*ساعتين/.test(seg)) {
+            target.setHours(target.getHours() + 2);
+            dKey = dKey || getLocalDateKey(target);
+            tKey = tKey || getLocalTimeKey(target);
+          } else if (/بعد\s*ساعة/.test(seg)) {
+            target.setHours(target.getHours() + 1);
+            dKey = dKey || getLocalDateKey(target);
+            tKey = tKey || getLocalTimeKey(target);
+          } else {
+            if (/بكرة|بكرا|غداً|غدا/.test(seg)) target.setDate(target.getDate() + 1);
+            dKey = dKey || getLocalDateKey(target);
+
+            const hm = seg.match(/(?:الساعة|الساعه|ساعة)\s*(\d{1,2})(?::(\d{2}))?/);
+            if (hm) {
+              let h = parseInt(hm[1], 10);
+              const m = hm[2] ? parseInt(hm[2], 10) : 0;
+              if (/العصر|الليل|الليلة|مساء|المغرب/.test(seg) && h < 12) h += 12;
+              else if (!/صباح|الصبح/.test(seg) && h <= 7) h += 12;
+              tKey = tKey || `${pad2(h)}:${pad2(m)}`;
+            } else if (/الليل|الليلة/.test(seg)) {
+              tKey = tKey || '21:00';
+            } else if (/العصر/.test(seg)) {
+              tKey = tKey || '16:00';
+            } else if (/الصبح|صباح/.test(seg)) {
+              tKey = tKey || '09:00';
+            } else {
+              const fb = new Date(now.getTime() + (i + 2) * 3600000);
+              dKey = dKey || getLocalDateKey(fb);
+              tKey = tKey || getLocalTimeKey(fb);
+            }
+          }
+
+          let effort = 'medium';
+          if (/كود|مشروع|شابتر|مذاكر|واجب|سلايدات|اختبار|برمجة/.test(seg)) effort = 'high';
+          else if (/موعد|قهوة|اتصل|أتصل|أشتري|شراء|رسالة|إرسال|أرسل/.test(seg)) effort = 'low';
+
+          let title = seg
+            .replace(/^(?:لازم|أبي|ابي|عندي|ودي|بكرة|غداً|اليوم)\s+/g, '')
+            .replace(/\s*(?:بعد\s*ساعة\s*ونص|بعد\s*ساعتين|بعد\s*ساعة|الساعة\s*\d{1,2}(?::\d{2})?|الليلة|العصر|الصبح|بكرة|اليوم)\s*/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+          if (title.length < 3) title = seg.slice(0, 42);
+
+          let tinyFirstStep = `خصّص دقيقتين بس للبداية في «${title}» بدون أي ضغط`;
+          if (/كود|مشروع|برمجة|GitHub/.test(seg)) tinyFirstStep = 'افتح المشروع وحدد الملف اللي يحتاج تعديل فقط (دقيقتين)';
+          else if (/مذاكر|شابتر|سلايدات|مراجع|واجب/.test(seg)) tinyFirstStep = 'افتح الملف واقرأ العناوين وأول صفحتين فقط';
+          else if (/موعد|أسنان|دكتور/.test(seg)) tinyFirstStep = 'احفظ الموقع وتأكد من الوقت قبل المشوار بنص ساعة';
+
+          return {
+            title,
+            dueAt: combineDateAndTime(dKey, tKey),
+            effort,
+            tinyFirstStep,
+            checkinMessage: `سجّلت «${title}» — عندك دقيقتين الحين نبدأ فيها ولا نرحّلها لوقت يناسبك؟`,
+          };
+        });
+      }
+
+      // 9.2 كاشف التسويف الذكي: تقسيم المهمة إلى 3 خطوات صغيرة قابلة للتحديد
+      async function aiBreakdownTask(task) {
+        const payload = {
+          systemInstruction: {
+            parts: [{
+              text: 'أنت مدرب إنتاجية لطيف. قسّم هذه المهمة المؤجلة إلى 3 خطوات صغيرة جداً ومحددة (كل خطوة 3-5 دقائق) باللهجة العربية البيضاء. أرجع مصفوفة JSON من 3 نصوص فقط.',
+            }],
+          },
+          contents: [{ parts: [{ text: `المهمة المؤجلة: ${task.title}` }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'ARRAY',
+              items: { type: 'STRING' },
+            },
+          },
+        };
+
+        try {
+          const text = await fetchGeminiWithBackoff(payload, 2);
+          const arr = safeParseJson(text);
+          if (Array.isArray(arr) && arr.length >= 2) {
+            return arr.slice(0, 3).map((s) => ({ text: String(s), done: false }));
+          }
+          throw new Error('Bad breakdown');
+        } catch (err) {
+          const t = task.title;
+          if (/مذاكر|شابتر|محاضر|مراجع|ذكاء/.test(t)) {
+            return [
+              { text: 'افتح الملف وتصفح العناوين الرئيسية فقط (٢ دقيقة)', done: false },
+              { text: 'اقرأ أول صفحتين وحدد أهم مصطلحين (٥ دقائق)', done: false },
+              { text: 'لخّص فكرة وحدة بسطرين عشان تثبت في ذهنك (٣ دقائق)', done: false },
+            ];
+          }
+          if (/كود|مشروع|برمجة/.test(t)) {
+            return [
+              { text: 'افتح المحرر وشغّل المشروع محلياً (٢ دقيقة)', done: false },
+              { text: 'اكتب تعليق يوضح المشكلة في الدالة المطلوبة (٣ دقائق)', done: false },
+              { text: 'طبّق أول تعديل صغير وجرّب التشغيل (٥ دقائق)', done: false },
+            ];
+          }
+          return [
+            { text: `جهّز الأدوات أو الملفات الخاصة بـ «${t}» فقط (٢ دقيقة)`, done: false },
+            { text: 'أنجز أول جزء بسيط بدون البحث عن المثالية (٥ دقائق)', done: false },
+            { text: 'راجع اللي سويته وحدد النقطة التالية (٣ دقائق)', done: false },
+          ];
+        }
+      }
+
+      // 9.3 تصغير المهمة داخل نافذة المتابعة
+      async function aiShrinkTask(task) {
+        const payload = {
+          systemInstruction: {
+            parts: [{
+              text: 'أنت مساعد لطيف. المستخدم مكسّل الآن. صغّر هذه المهمة إلى خطوة تافهة جداً تستغرق أقل من دقيقتين مع جملة تشجيع قصيرة. أرجع JSON بخصائص tinyFirstStep و note.',
+            }],
+          },
+          contents: [{ parts: [{ text: `المهمة: ${task.title}\nالخطوة الحالية: ${task.tinyFirstStep}` }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'OBJECT',
+              properties: {
+                tinyFirstStep: { type: 'STRING' },
+                note: { type: 'STRING' },
+              },
+              required: ['tinyFirstStep', 'note'],
+            },
+          },
+        };
+
+        try {
+          const text = await fetchGeminiWithBackoff(payload, 2);
+          const obj = safeParseJson(text);
+          if (obj?.tinyFirstStep) return obj;
+          throw new Error('Bad shrink');
+        } catch (err) {
+          return {
+            tinyFirstStep: `فقط افتح الملف أو الصفحة الخاصة بـ «${task.title}» لمدة ٦٠ ثانية بدون أي ضغط`,
+            note: 'مجرد فتح الملف يكسر ٨٠٪ من الكسل — جرّب دقيقتين بس!',
+          };
+        }
+      }
+
+      // =======================================================================
+      // 10. تحديث واجهة التطبيق بالكامل (Render Pipeline)
+      // =======================================================================
+      function renderAll() {
+        renderBentoProgress();
+        renderEnergyBar();
+        renderDateStrip();
+        renderTimelineOrZen();
+        renderAchievementsView();
+        renderDockState();
+        tickClockAndCountdowns();
+      }
+
+      function renderBentoProgress() {
+        const total = tasks.length;
+        const done = tasks.filter((t) => t.status === 'completed').length;
+        const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+        el.bentoProgressPct.textContent = `${pct}%`;
+        el.bentoProgressCount.textContent = `${done}/${total}`;
+
+        const circ = 2 * Math.PI * 29;
+        el.bentoProgressRing.style.strokeDasharray = String(circ);
+        el.bentoProgressRing.style.strokeDashoffset = String(circ * (1 - pct / 100));
+
+        const pendingGlobal = tasks.filter((t) => t.status !== 'completed').length;
+        el.followupPulseDot.classList.toggle('hidden', pendingGlobal === 0);
+      }
+
+      function renderEnergyBar() {
+        const meta = {
+          high: {
+            activeStyle: 'background: var(--accent-emerald); color: #FFFFFF; box-shadow: 0 4px 12px rgba(16,185,129,0.28);',
+            hint: 'المهام الأهم مرفوعة للأعلى ⚡',
+          },
+          normal: {
+            activeStyle: 'background: var(--brand-navy); color: #FFFFFF; box-shadow: 0 4px 12px rgba(20,33,61,0.22);',
+            hint: 'الترتيب الزمني الطبيعي حسب الساعة',
+          },
+          low: {
+            activeStyle: 'background: var(--accent-coral); color: #FFFFFF; box-shadow: 0 4px 12px rgba(225,29,72,0.28);',
+            hint: 'وضع الهدوء: مهمة واحدة صغيرة بدون ضغط 🪫',
+          },
+        };
+
+        document.querySelectorAll('.energy-pill').forEach((btn) => {
+          const mode = btn.getAttribute('data-energy');
+          if (mode === energyMode) {
+            btn.setAttribute('style', meta[mode].activeStyle);
+          } else {
+            btn.setAttribute('style', 'background: transparent; color: var(--text-secondary);');
+          }
+        });
+        el.energyStatusHint.textContent = meta[energyMode].hint;
+      }
+
+      function renderDateStrip() {
+        const today = new Date();
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+          const key = getLocalDateKey(d);
+          days.push({
+            key,
+            top: i === 0 ? 'اليوم' : i === 1 ? 'غداً' : ARABIC_DAYS[d.getDay()],
+            num: d.getDate(),
+          });
+        }
+
+        // إذا اختار المستخدم تاريخاً خارج الأيام الـ 7 نعرضه في البداية
+        if (selectedDateKey !== 'all' && !days.some((d) => d.key === selectedDateKey)) {
+          const d = new Date(combineDateAndTime(selectedDateKey, '12:00'));
+          days.unshift({ key: selectedDateKey, top: ARABIC_DAYS[d.getDay()], num: d.getDate() });
+        }
+
+        const pendingAllCount = tasks.filter((t) => t.status !== 'completed').length;
+        const isAll = selectedDateKey === 'all';
+
+        let html = `
+          <button
+            type="button"
+            data-date-key="all"
+            class="shrink-0 min-w-[52px] h-[54px] px-2 rounded-2xl border flex flex-col items-center justify-center gap-0.5 transition-all active:scale-95"
+            style="${
+              isAll
+                ? 'background: var(--brand-navy); color:#FFFFFF; border-color: transparent; box-shadow: 0 6px 16px rgba(20,33,61,0.22);'
+                : 'background: var(--bg-card); color: var(--text-primary); border-color: var(--border-subtle);'
+            }"
+          >
+            <span class="text-[11px] font-bold">الكل</span>
+            <span class="text-[11px] font-bold tabular-nums" style="color:${isAll ? '#6EE7B7' : 'var(--text-muted)'};">${pendingAllCount}</span>
+          </button>
+        `;
+
+        html += days
+          .map((d) => {
+            const active = selectedDateKey === d.key;
+            const dayTasks = tasks.filter((t) => getLocalDateKey(t.dueAt) === d.key);
+            const dots = dayTasks
+              .slice(0, 3)
+              .map((t) => {
+                let col = active ? '#FFFFFF' : 'var(--brand-navy)';
+                if (t.status === 'completed') col = 'var(--accent-emerald)';
+                else if (t.snoozeCount >= 2) col = 'var(--accent-amber)';
+                else if (t.effort === 'high') col = 'var(--accent-coral)';
+                return `<span class="w-1.5 h-1.5 rounded-full" style="background:${col};"></span>`;
+              })
+              .join('');
+
+            return `
+              <button
+                type="button"
+                data-date-key="${d.key}"
+                class="shrink-0 min-w-[52px] h-[54px] px-2 rounded-2xl border flex flex-col items-center justify-center transition-all active:scale-95"
+                style="${
+                  active
+                    ? 'background: var(--brand-navy); color:#FFFFFF; border-color: transparent; box-shadow: 0 6px 16px rgba(20,33,61,0.22);'
+                    : 'background: var(--bg-card); color: var(--text-primary); border-color: var(--border-subtle);'
+                }"
+              >
+                <span class="text-[10px] font-medium leading-tight" style="color:${active ? 'rgba(255,255,255,0.78)' : 'var(--text-muted)'};">${d.top}</span>
+                <span class="text-sm font-bold tabular-nums leading-tight">${d.num}</span>
+                <div class="flex items-center justify-center gap-0.5 h-1.5 mt-0.5">${dots}</div>
+              </button>
+            `;
+          })
+          .join('');
+
+        el.dateStrip.innerHTML = html;
+        el.selectedDateBadge.textContent = formatFriendlyDate(selectedDateKey);
+      }
+
+      function renderTimelineOrZen() {
+        const scoped =
+          selectedDateKey === 'all'
+            ? tasks
+            : tasks.filter((t) => getLocalDateKey(t.dueAt) === selectedDateKey);
+
+        const pending = scoped
+          .filter((t) => t.status !== 'completed')
+          .sort((a, b) => a.dueAt - b.dueAt);
+
+        el.pendingCounterBadge.textContent = pending.length;
+
+        if (pending.length === 0) {
+          el.timelineSectionTitle.textContent = 'جدولك الحي';
+          el.timelineContainer.innerHTML = `
+            <div class="surface-card rounded-[26px] p-8 text-center space-y-2 animate-fade-in">
+              <div class="text-3xl">✨</div>
+              <h3 class="text-sm font-bold" style="color: var(--text-primary);">مساحتك صافية ومرتّبة!</h3>
+              <p class="text-xs leading-relaxed" style="color: var(--text-muted);">اضغط الكرة الذكية بالأسفل لتفريغ أي فكرة أو موعد في ثوانٍ، أو اختر «الكل» من شريط التواريخ.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // وضع "مكسّل" الهادئ (Zen Anti-Laziness Mode)
+        if (energyMode === 'low') {
+          el.timelineSectionTitle.textContent = 'خطوة وحدة بدون ضغط';
+          renderZenSpotlight(pending);
+          return;
+        }
+
+        // وضع "متحمّس" يرفع المهام عالية الجهد للأعلى
+        let ordered = [...pending];
+        if (energyMode === 'high') {
+          el.timelineSectionTitle.textContent = 'أفضل وقت للإنجاز ⚡';
+          const rank = { high: 0, medium: 1, low: 2 };
+          ordered.sort((a, b) => (rank[a.effort] ?? 1) - (rank[b.effort] ?? 1) || a.dueAt - b.dueAt);
+        } else {
+          el.timelineSectionTitle.textContent = 'جدولك الحي';
+        }
+
+        // عرض الخط الزمني العمودي الأنيق
+        const nowIndicatorHtml = `
+          <div class="flex items-center gap-2 pr-1 py-0.5">
+            <span class="w-2.5 h-2.5 rounded-full pulse-dot shrink-0" style="background: var(--accent-coral);"></span>
+            <span class="text-[10px] font-bold shrink-0" style="color: var(--accent-coral);">الآن ${formatArabic12h(Date.now())}</span>
+            <div class="flex-1 h-[1px]" style="background: linear-gradient(to left, var(--accent-coral-border), transparent);"></div>
+          </div>
+        `;
+
+        el.timelineContainer.innerHTML = `
+          ${nowIndicatorHtml}
+          <div class="relative space-y-3">
+            <!-- الخط العمودي الموحد على الطرف الأيمن -->
+            <div class="absolute top-3 bottom-3 right-[5px] w-[2px] rounded-full pointer-events-none" style="background: var(--timeline-line);"></div>
+            ${ordered.map((task) => buildTimelineTaskItemHTML(task)).join('')}
+          </div>
+        `;
+      }
+
+      // بطاقة الهدوء الوحيدة في وضع "مكسّل"
+      function renderZenSpotlight(pendingList) {
+        // نختار أقرب/أسهل مهمة
+        const spotlight =
+          pendingList.find((t) => t.effort === 'low') ||
+          pendingList.find((t) => t.effort === 'medium') ||
+          pendingList[0];
+        const others = pendingList.filter((t) => t.id !== spotlight.id);
+        const cd = getCountdownState(spotlight.dueAt);
+
+        let html = `
+          <div class="surface-card rounded-[28px] p-5 space-y-4 animate-fade-in border-2" style="border-color: var(--accent-coral-border);">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold" style="background: var(--accent-coral-soft); color: var(--accent-coral);">
+                🪫 وضع كسر الكسل
+              </span>
+              <span class="text-[11px] font-semibold" style="color: var(--text-muted);">
+                ${escapeHTML(formatFriendlyDate(getLocalDateKey(spotlight.dueAt)))} • ${escapeHTML(formatArabic12h(spotlight.dueAt))}
+              </span>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-lg font-bold leading-snug" style="color: var(--text-primary);">${escapeHTML(spotlight.title)}</h3>
+              <div data-countdown-id="${spotlight.id}" class="${cd.visible ? `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border tabular-nums ${cd.extraClass}` : 'hidden'}" style="${cd.visible ? cd.style : ''}">
+                ${cd.visible ? cd.html : ''}
+              </div>
+            </div>
+
+            <div class="surface-subtle rounded-2xl p-3.5 space-y-1">
+              <span class="text-[11px] font-bold block" style="color: var(--accent-coral);">انسَ القائمة كلها — بس سوّ هذي في دقيقتين:</span>
+              <p class="text-sm font-semibold leading-relaxed" style="color: var(--text-primary);">${escapeHTML(spotlight.tinyFirstStep)}</p>
+            </div>
+
+            <div class="space-y-2.5">
+              <button
+                type="button"
+                data-action="focus"
+                data-id="${spotlight.id}"
+                class="w-full py-3.5 px-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+                style="background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);"
+              >
+                <span>🎯</span>
+                <span>ابدأ دقيقتين فقط</span>
+              </button>
+
+              ${
+                others.length > 0
+                  ? `
+                    <button
+                      id="zenPostponeOthersBtn"
+                      type="button"
+                      class="w-full py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-1.5 border transition-all active:scale-95"
+                      style="background: var(--accent-amber-soft); color: var(--accent-amber-text); border-color: rgba(245,158,11,0.3);"
+                    >
+                      <span>🌙</span>
+                      <span>رحّل المهام الثقيلة (${others.length}) لوقت لاحق</span>
+                    </button>
+                  `
+                  : ''
+              }
+            </div>
+          </div>
+        `;
+
+        if (others.length > 0) {
+          html += `
+            <div class="text-center pt-1">
+              <button id="toggleZenOthersBtn" type="button" class="text-xs font-semibold underline underline-offset-4" style="color: var(--text-muted);">
+                ${showRemainingInZen ? 'إخفاء باقي المهام للتركيز 🙈' : `عرض باقي المهام المخفية (${others.length})`}
+              </button>
+            </div>
+          `;
+          if (showRemainingInZen) {
+            html += `<div class="space-y-3 opacity-80 pt-1">${others.map((t) => buildTimelineTaskItemHTML(t)).join('')}</div>`;
+          }
+        }
+
+        el.timelineContainer.innerHTML = html;
+      }
+
+      // بطاقة مهمة واحدة على الخط الزمني الحي
+      function buildTimelineTaskItemHTML(task) {
+        const cd = getCountdownState(task.dueAt);
+        const isHighBoost = energyMode === 'high' && task.effort === 'high';
+        const showRadar = task.snoozeCount >= 2;
+
+        const nodeColor = cd.urgent
+          ? 'var(--accent-coral)'
+          : isHighBoost
+          ? 'var(--accent-emerald)'
+          : showRadar
+          ? 'var(--accent-amber)'
+          : 'var(--brand-navy)';
+
+        // بناء قائمة الخطوات الفرعية إن تم توليدها بكاشف التسويف
+        let subStepsHtml = '';
+        if (task.subSteps && task.subSteps.length > 0) {
+          subStepsHtml = `
+            <div class="surface-subtle rounded-2xl p-2.5 space-y-1.5 animate-fade-in">
+              <span class="text-[10px] font-bold block px-1" style="color: var(--accent-emerald);">✨ خطواتك المصغّرة:</span>
+              ${task.subSteps
+                .map(
+                  (step, idx) => `
+                    <button
+                      type="button"
+                      data-action="toggle-substep"
+                      data-id="${task.id}"
+                      data-sub-index="${idx}"
+                      class="w-full text-right flex items-start gap-2 p-1.5 rounded-xl transition-colors hover:opacity-90"
+                    >
+                      <span class="mt-0.5 w-4 h-4 rounded-md border flex items-center justify-center shrink-0 text-[10px] font-bold" style="${
+                        step.done
+                          ? 'background: var(--accent-emerald); border-color: var(--accent-emerald); color: #fff;'
+                          : 'border-color: var(--border-strong); color: transparent;'
+                      }">✓</span>
+                      <span class="text-xs leading-snug ${step.done ? 'line-through opacity-55' : 'font-medium'}" style="color: var(--text-primary);">${escapeHTML(step.text)}</span>
+                    </button>
+                  `
+                )
+                .join('')}
+            </div>
+          `;
+        }
+
+        // شريط كاشف التسويف الذكي (يظهر عندما snoozeCount >= 2)
+        const radarBannerHtml =
+          showRadar && (!task.subSteps || task.subSteps.length === 0)
+            ? `
+              <div class="rounded-2xl p-3 border space-y-2 animate-fade-in" style="background: var(--accent-amber-soft); border-color: rgba(245,158,11,0.35);">
+                <p class="text-[11px] font-bold leading-relaxed" style="color: var(--accent-amber-text);">
+                  🧠 لاحظت إنك أجّلتها ${task.snoozeCount} مرات — أقسّمها لك لـ ٣ خطوات صغيرة؟
+                </p>
+                <button
+                  type="button"
+                  data-action="ai-breakdown"
+                  data-id="${task.id}"
+                  class="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white inline-flex items-center gap-1.5 transition-all active:scale-95"
+                  style="background: linear-gradient(135deg, #D97706 0%, #B45309 100%);"
+                >
+                  <span>✨</span>
+                  <span>قسّمها بالذكاء الاصطناعي</span>
+                </button>
+              </div>
+            `
+            : '';
+
+        return `
+          <div class="relative pr-6 animate-fade-in">
+            <!-- نقطة الخط الزمني -->
+            <span class="absolute right-0 top-5 w-3 h-3 rounded-full border-2 z-10" style="background: ${nodeColor}; border-color: var(--bg-app);"></span>
+
+            <article class="surface-card rounded-[24px] p-3.5 space-y-2.5">
+              <!-- الصف العلوي: الوقت القابل للتعديل + العداد التنازلي + شارة متحمس -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <button
+                  type="button"
+                  data-action="edit-time"
+                  data-id="${task.id}"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-transform active:scale-95"
+                  style="background: var(--brand-navy-soft); color: var(--text-primary);"
+                  title="اضغط لتعديل الوقت"
+                >
+                  <span>🕒</span>
+                  <span>${escapeHTML(formatFriendlyDate(getLocalDateKey(task.dueAt)))} • ${escapeHTML(formatArabic12h(task.dueAt))}</span>
+                </button>
+
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ${
+                    isHighBoost
+                      ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style="background: var(--accent-emerald);">أفضل وقت للإنجاز</span>`
+                      : ''
+                  }
+                  <div
+                    data-countdown-id="${task.id}"
+                    class="${cd.visible ? `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border tabular-nums ${cd.extraClass}` : 'hidden'}"
+                    style="${cd.visible ? cd.style : ''}"
+                  >
+                    ${cd.visible ? cd.html : ''}
+                  </div>
+                </div>
+              </div>
+
+              <!-- العنوان ودائرة الإنجاز -->
+              <div class="flex items-start gap-2.5">
+                <button
+                  type="button"
+                  data-action="complete"
+                  data-id="${task.id}"
+                  class="mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all active:scale-90 hover:border-emerald-500"
+                  style="border-color: var(--border-strong);"
+                  aria-label="إنجاز المهمة"
+                >
+                  <svg class="w-3.5 h-3.5 opacity-0 hover:opacity-60" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0 space-y-1">
+                  <h3 class="text-sm font-bold leading-snug" style="color: var(--text-primary);">${escapeHTML(task.title)}</h3>
+                  <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+                    <span class="font-bold" style="color: var(--accent-emerald);">أول خطوة:</span>
+                    ${escapeHTML(task.tinyFirstStep)}
+                  </p>
+                </div>
+              </div>
+
+              <!-- كاشف التسويف الذكي أو الخطوات المقسّمة -->
+              ${radarBannerHtml}
+              ${subStepsHtml}
+
+              <!-- أزرار التحكم النظيفة والبسيطة -->
+              <div class="flex items-center justify-between pt-1.5 border-t" style="border-color: var(--border-subtle);">
+                <div class="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    data-action="focus"
+                    data-id="${task.id}"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all active:scale-95"
+                    style="background: var(--accent-emerald-soft); color: var(--accent-emerald-text);"
+                  >
+                    <span>🎯</span>
+                    <span>تركيز</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-action="snooze"
+                    data-id="${task.id}"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all active:scale-95"
+                    style="background: var(--brand-navy-soft); color: var(--text-secondary);"
+                  >
+                    <span>⏰</span>
+                    <span>ترحيل</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  data-action="delete"
+                  data-id="${task.id}"
+                  class="p-1.5 rounded-xl opacity-55 hover:opacity-100 transition-all active:scale-90"
+                  style="color: var(--accent-coral);"
+                  aria-label="حذف المهمة"
+                  title="حذف"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+        `;
+      }
+
+      // عرض تبويب "إنجازاتي"
+      function renderAchievementsView() {
+        const completed = tasks.filter((t) => t.status === 'completed');
+        el.statCompletedCount.textContent = completed.length;
+        el.statFocusMins.textContent = stats.focusMinutes;
+        el.statRescuedCount.textContent = stats.snoozedRescued;
+        el.completedListCount.textContent = completed.length;
+
+        if (completed.length === 0) {
+          el.completedTasksList.innerHTML = `
+            <div class="surface-card rounded-2xl p-6 text-center space-y-1">
+              <span class="text-2xl block">🌱</span>
+              <p class="text-xs font-bold" style="color: var(--text-primary);">لسه ما أضفت إنجازات اليوم</p>
+              <p class="text-[11px]" style="color: var(--text-muted);">ابدأ بدقيقتين في نفق التركيز وشوف كيف تتحمس!</p>
+            </div>
+          `;
+          return;
+        }
+
+        el.completedTasksList.innerHTML = completed
+          .map(
+            (t) => `
+              <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <button
+                    type="button"
+                    data-action="restore"
+                    data-id="${t.id}"
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                    style="background: var(--accent-emerald);"
+                    title="إعادة للجدول"
+                  >✓</button>
+                  <div class="min-w-0">
+                    <p class="text-sm font-semibold line-through opacity-75 truncate" style="color: var(--text-primary);">${escapeHTML(t.title)}</p>
+                    <span class="text-[10px]" style="color: var(--text-muted);">أُنجزت بنجاح 🎉</span>
+                  </div>
+                </div>
+                <button type="button" data-action="delete" data-id="${t.id}" class="p-1.5 opacity-55 hover:opacity-100" style="color: var(--accent-coral);" aria-label="حذف">✕</button>
+              </div>
+            `
+          )
+          .join('');
+      }
+
+      function renderDockState() {
+        const isTimeline = activeNavTab === 'timeline';
+        el.viewTimeline.classList.toggle('hidden', !isTimeline);
+        el.viewAchievements.classList.toggle('hidden', isTimeline);
+
+        el.dockTimelineBtn.setAttribute(
+          'style',
+          isTimeline ? 'color: var(--accent-coral);' : 'color: var(--text-muted);'
+        );
+        el.dockAchievementsBtn.setAttribute(
+          'style',
+          !isTimeline ? 'color: var(--accent-coral);' : 'color: var(--text-muted);'
+        );
+      }
+
+      // =======================================================================
+      // 11. التفريغ السريع والصوت (Quick Capture + Web Speech API)
+      // =======================================================================
+      function openCaptureSheet() {
+        el.captureModal.classList.remove('hidden');
+        el.captureModal.classList.add('flex');
+        setTimeout(() => el.captureTextarea.focus(), 180);
+      }
+
+      function closeCaptureSheet() {
+        if (isRecording) stopSpeech();
+        el.captureModal.classList.add('hidden');
+        el.captureModal.classList.remove('flex');
+      }
+
+      function clearCaptureDateTime() {
+        el.captureDateInput.value = '';
+        el.captureTimeInput.value = '';
+        el.clearCaptureTimeBtn.classList.add('hidden');
+        document.querySelectorAll('.capture-preset').forEach((b) => {
+          b.setAttribute('style', 'background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);');
+        });
+      }
+
+      async function handleCaptureSubmit() {
+        const raw = el.captureTextarea.value.trim();
+        if (!raw) {
+          showToast('اكتب أو تكلّم بأي مهمة أولاً', 'coral');
+          el.captureTextarea.focus();
+          return;
+        }
+        if (isRecording) stopSpeech();
+
+        el.submitCaptureBtn.disabled = true;
+        el.captureSpinner.classList.remove('hidden');
+        el.submitCaptureText.textContent = 'جاري الترتيب بذكاء...';
+
+        try {
+          const parsed = await aiParseBrainDump(raw, el.captureDateInput.value, el.captureTimeInput.value);
+          const now = Date.now();
+          const newItems = parsed.map((item, idx) => ({
+            id: `t_${now}_${idx}`,
+            title: item.title,
+            dueAt: item.dueAt,
+            effort: item.effort,
+            snoozeCount: 0,
+            tinyFirstStep: item.tinyFirstStep,
+            checkinMessage: item.checkinMessage,
+            status: 'pending',
+            subSteps: [],
+            completedAt: null,
+          }));
+
+          tasks = [...newItems, ...tasks];
+          activeNavTab = 'timeline';
+          if (selectedDateKey !== 'all' && newItems.some((i) => getLocalDateKey(i.dueAt) !== selectedDateKey)) {
+            selectedDateKey = 'all';
+          }
+          saveTasks();
+          renderAll();
+
+          el.captureTextarea.value = '';
+          clearCaptureDateTime();
+          closeCaptureSheet();
+          showToast(
+            newItems.length === 1
+              ? 'أضفنا مهمتك في خطك الزمني بنجاح ✨'
+              : `تم استخراج وترتيب ${newItems.length} مهام على خطك الزمني ✨`,
+            'emerald'
+          );
+        } finally {
+          el.submitCaptureBtn.disabled = false;
+          el.captureSpinner.classList.add('hidden');
+          el.submitCaptureText.textContent = 'رتّبها بالذكاء الاصطناعي ✨';
+        }
+      }
+
+      function setupSpeech() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+        const rec = new SR();
+        rec.lang = 'ar-SA';
+        rec.continuous = true;
+        rec.interimResults = true;
+
+        rec.onstart = () => {
+          isRecording = true;
+          textBeforeVoice = el.captureTextarea.value.trim();
+          el.voiceWaveBox.classList.remove('hidden');
+          el.voiceRecordLabel.textContent = 'إيقاف';
+        };
+
+        rec.onresult = (e) => {
+          let spoken = '';
+          for (let i = 0; i < e.results.length; i++) {
+            spoken += e.results[i][0].transcript;
+          }
+          el.captureTextarea.value = (textBeforeVoice ? textBeforeVoice + ' ' : '') + spoken.trim();
+        };
+
+        rec.onerror = (e) => {
+          stopSpeech(true);
+          if (e.error === 'not-allowed') showToast('يرجى السماح بصلاحية الميكروفون', 'coral');
+          else if (e.error !== 'aborted') showToast('تعذر التقاط الصوت — يمكنك الكتابة مباشرة', 'amber');
+        };
+
+        rec.onend = () => stopSpeech(true);
+        return rec;
+      }
+
+      function toggleSpeech() {
+        if (isRecording) {
+          stopSpeech();
+          return;
+        }
+        if (!speechRec) speechRec = setupSpeech();
+        if (!speechRec) {
+          showToast('التسجيل الصوتي غير مدعوم في هذا المتصفح — جرّب Chrome', 'amber');
+          return;
+        }
+        try { speechRec.start(); } catch (e) {}
+      }
+
+      function stopSpeech(fromEvent = false) {
+        isRecording = false;
+        el.voiceWaveBox.classList.add('hidden');
+        el.voiceRecordLabel.textContent = 'صوت';
+        if (!fromEvent && speechRec) {
+          try { speechRec.stop(); } catch (e) {}
+        }
+      }
+
+      // =======================================================================
+      // 12. المتابعة التفاعلية (Interactive Follow-Up Modal)
+      // =======================================================================
+      function openFollowupModal(specificId = null) {
+        const pending = tasks.filter((t) => t.status !== 'completed').sort((a, b) => a.dueAt - b.dueAt);
+        const task = specificId ? pending.find((t) => t.id === specificId) : pending[0];
+        if (!task) {
+          showToast('أنجزت كل مهامك! أضف مهمة جديدة لتجربة المتابعة 🎉', 'emerald');
+          return;
+        }
+
+        activeFollowupTaskId = task.id;
+        el.followupAiMessage.textContent = task.checkinMessage;
+        el.followupShrinkNote.classList.add('hidden');
+        el.followupTaskTitle.textContent = task.title;
+        el.followupTaskTime.textContent = `${formatFriendlyDate(getLocalDateKey(task.dueAt))} • ${formatArabic12h(task.dueAt)}`;
+        el.followupTaskStep.textContent = task.tinyFirstStep;
+        el.followupSnoozePanel.classList.add('hidden');
+        el.followupShrinkText.textContent = 'مكسّل — صغّرها لي ⚡';
+
+        el.followupModal.classList.remove('hidden');
+        el.followupModal.classList.add('flex');
+      }
+
+      function closeFollowupModal() {
+        activeFollowupTaskId = null;
+        el.followupModal.classList.add('hidden');
+        el.followupModal.classList.remove('flex');
+      }
+
+      // =======================================================================
+      // 13. نفق التركيز (Focus Tunnel Mode + Confetti Celebration)
+      // =======================================================================
+      function openFocusTunnel(taskId, mins = 2) {
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task) return;
+        closeFollowupModal();
+
+        activeFocusTaskId = task.id;
+        el.focusTaskTitle.textContent = task.title;
+        el.focusTaskStep.textContent = task.tinyFirstStep;
+        el.focusActiveStage.classList.remove('hidden');
+        el.focusCelebrationStage.classList.add('hidden');
+
+        startFocusTimer(mins);
+
+        el.focusTunnelOverlay.classList.remove('hidden');
+        el.focusTunnelOverlay.classList.add('flex');
+      }
+
+      function startFocusTimer(mins) {
+        clearInterval(focusInterval);
+        focusDurationSec = mins * 60;
+        focusRemainingSec = focusDurationSec;
+        focusPaused = false;
+        el.focusPauseToggleBtn.textContent = 'إيقاف مؤقت ⏸';
+        el.focusTimerStateLabel.textContent = 'ركّز على الخطوة بس';
+
+        // تحديث شرائح المدة
+        document.querySelectorAll('.focus-dur-chip').forEach((chip) => {
+          const val = Number(chip.getAttribute('data-focus-mins'));
+          if (val === mins) {
+            chip.className = 'focus-dur-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-white text-[#070D1F]';
+          } else {
+            chip.className = 'focus-dur-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition-all text-slate-300 hover:text-white';
+          }
+        });
+
+        updateFocusRingUI();
+        focusInterval = setInterval(() => {
+          if (focusPaused) return;
+          focusRemainingSec--;
+          updateFocusRingUI();
+          if (focusRemainingSec <= 0) {
+            clearInterval(focusInterval);
+            triggerFocusCelebration();
+          }
+        }, 1000);
+      }
+
+      function updateFocusRingUI() {
+        const sec = Math.max(0, focusRemainingSec);
+        el.focusTimerDisplay.textContent = `${pad2(Math.floor(sec / 60))}:${pad2(sec % 60)}`;
+        const progress = (focusDurationSec - sec) / focusDurationSec;
+        el.focusRingCircle.style.strokeDasharray = String(FOCUS_RING_CIRCUMFERENCE);
+        el.focusRingCircle.style.strokeDashoffset = String(FOCUS_RING_CIRCUMFERENCE * progress);
+        el.focusRingCircle.style.stroke = sec <= 15 && sec > 0 ? '#F43F5E' : '#34D399';
+      }
+
+      function triggerFocusCelebration() {
+        clearInterval(focusInterval);
+        const spentMins = Math.max(2, Math.round((focusDurationSec - focusRemainingSec) / 60) || Math.round(focusDurationSec / 60));
+        stats.focusMinutes += spentMins;
+        saveStats();
+
+        el.focusActiveStage.classList.add('hidden');
+        el.focusCelebrationStage.classList.remove('hidden');
+        playSoftChime();
+        launchConfetti();
+      }
+
+      function closeFocusTunnel() {
+        clearInterval(focusInterval);
+        activeFocusTaskId = null;
+        el.focusTunnelOverlay.classList.add('hidden');
+        el.focusTunnelOverlay.classList.remove('flex');
+        renderAll();
+      }
+
+      // احتفال Confetti خفيف وسلس بدون أي مكتبات خارجية
+      function launchConfetti() {
+        const canvas = el.confettiCanvas;
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const colors = ['#34D399', '#F43F5E', '#FBBF24', '#60A5FA', '#FFFFFF'];
+        const particles = Array.from({ length: 70 }, () => ({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 80,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 11,
+          vy: -Math.random() * 12 - 4,
+          size: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rot: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+          alpha: 1,
+        }));
+
+        let frame = 0;
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach((p) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.32;
+            p.rot += p.vRot;
+            p.alpha -= 0.011;
+            if (p.alpha > 0) {
+              ctx.save();
+              ctx.globalAlpha = Math.max(0, p.alpha);
+              ctx.translate(p.x, p.y);
+              ctx.rotate((p.rot * Math.PI) / 180);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+              ctx.restore();
+            }
+          });
+          frame++;
+          if (frame < 110) requestAnimationFrame(draw);
+          else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        requestAnimationFrame(draw);
+      }
+
+      function playSoftChime() {
+        try {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          const ctx = new Ctx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.55);
+        } catch (e) {}
+      }
+
+      // =======================================================================
+      // 14. موجز الصباح (Morning Briefing Story)
+      // =======================================================================
+      function openBriefingStory() {
+        const pending = tasks.filter((t) => t.status !== 'completed').sort((a, b) => a.dueAt - b.dueAt);
+        const h = new Date().getHours();
+        el.briefingHeading.textContent = h < 12 ? 'صباح الخير ☀️' : h < 19 ? 'مساء الإنجاز 🌤️' : 'تخطيط هادئ لليلة 🌙';
+
+        if (pending.length === 0) {
+          el.briefingSummaryText.textContent = 'كل مهامك منجزة بالكامل! يومك رايق وتقدر تفرّغ أي خطة جديدة وقت ما تحب.';
+          el.briefingEasyTaskTitle.textContent = 'لا توجد مهام معلّقة';
+          el.briefingEasyTaskStep.textContent = 'خذ راحة تستاهلها أو أضف هدف صغير جديد.';
+        } else {
+          const easiest = pending.find((t) => t.effort === 'low') || pending.find((t) => t.effort === 'medium') || pending[0];
+          el.briefingSummaryText.textContent = `عندك ${pending.length} مهام بانتظارك.. لا تشيل همها، أسهل وحدة فيهم ما تاخذ إلا دقيقتين بس عشان تنطلق.`;
+          el.briefingEasyTaskTitle.textContent = easiest.title;
+          el.briefingEasyTaskStep.textContent = easiest.tinyFirstStep;
+        }
+
+        // إعادة تشغيل شريط القصة
+        el.briefingStoryBar.classList.remove('story-progress-fill');
+        void el.briefingStoryBar.offsetWidth;
+        el.briefingStoryBar.classList.add('story-progress-fill');
+
+        el.briefingModal.classList.remove('hidden');
+        el.briefingModal.classList.add('flex');
+      }
+
+      function closeBriefingStory() {
+        el.briefingModal.classList.add('hidden');
+        el.briefingModal.classList.remove('flex');
+      }
+
+      // =======================================================================
+      // 15. نافذة التعديل السريع للوقت / الترحيل
+      // =======================================================================
+      function openTimePopover(taskId, isSnooze = false) {
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task) return;
+        activePopoverTaskId = task.id;
+        popoverCountsAsSnooze = isSnooze;
+
+        el.timePopoverHeading.textContent = isSnooze ? '⏰ ترحيل المهمة لوقت يناسبك' : '🕒 تعديل تاريخ وساعة المهمة';
+        el.timePopoverTaskName.textContent = task.title;
+        el.popoverDateInput.value = getLocalDateKey(task.dueAt);
+        el.popoverTimeInput.value = getLocalTimeKey(task.dueAt);
+
+        el.timePopoverModal.classList.remove('hidden');
+        el.timePopoverModal.classList.add('flex');
+      }
+
+      function closeTimePopover() {
+        activePopoverTaskId = null;
+        el.timePopoverModal.classList.add('hidden');
+        el.timePopoverModal.classList.remove('flex');
+      }
+
+      function applyReschedule(taskId, newDueMs, countAsSnooze = true) {
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task) return;
+
+        task.dueAt = newDueMs;
+        if (countAsSnooze) {
+          task.snoozeCount = (task.snoozeCount || 0) + 1;
+          stats.snoozedRescued += 1;
+          saveStats();
+        }
+        task.checkinMessage = `رحّلنا «${task.title}» إلى ${formatFriendlyDate(getLocalDateKey(newDueMs))} الساعة ${formatArabic12h(newDueMs)} — جاهز نبدأ بأول خطوة؟`;
+        saveTasks();
+        renderAll();
+
+        if (countAsSnooze && task.snoozeCount >= 2) {
+          showToast('تم الترحيل! كاشف التسويف الذكي جاهز يقسّمها لك لـ ٣ خطوات 🧠', 'amber');
+        } else {
+          showToast(`تم تحديث الموعد إلى ${formatFriendlyDate(getLocalDateKey(newDueMs))} ${formatArabic12h(newDueMs)} ⏰`, 'navy');
+        }
+      }
+
+      // =======================================================================
+      // 16. ربط الأحداث التفاعلية بالكامل
+      // =======================================================================
+      function bindEvents() {
+        // الرأس
+        el.themeToggleBtn.addEventListener('click', () => {
+          applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+        el.openBriefingBtn.addEventListener('click', openBriefingStory);
+        el.openFollowupBtn.addEventListener('click', () => openFollowupModal());
+
+        // الشريط السفلي
+        el.dockTimelineBtn.addEventListener('click', () => {
+          activeNavTab = 'timeline';
+          renderDockState();
+        });
+        el.dockAchievementsBtn.addEventListener('click', () => {
+          activeNavTab = 'achievements';
+          renderAchievementsView();
+          renderDockState();
+        });
+        el.openCaptureOrbBtn.addEventListener('click', openCaptureSheet);
+
+        // رادار الطاقة
+        document.querySelectorAll('.energy-pill').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            energyMode = btn.getAttribute('data-energy');
+            showRemainingInZen = false;
+            renderAll();
+          });
+        });
+
+        // شريط التواريخ
+        el.dateStrip.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-date-key]');
+          if (!btn) return;
+          selectedDateKey = btn.getAttribute('data-date-key');
+          showRemainingInZen = false;
+          renderAll();
+        });
+        el.customDatePicker.addEventListener('change', () => {
+          if (el.customDatePicker.value) {
+            selectedDateKey = el.customDatePicker.value;
+            showRemainingInZen = false;
+            renderAll();
+          }
+        });
+
+        // تفويض أحداث الخط الزمني ووضع الهدوء
+        el.timelineContainer.addEventListener('click', async (e) => {
+          if (e.target.closest('#toggleZenOthersBtn')) {
+            showRemainingInZen = !showRemainingInZen;
+            renderTimelineOrZen();
+            tickClockAndCountdowns();
+            return;
+          }
+
+          if (e.target.closest('#zenPostponeOthersBtn')) {
+            const scoped = selectedDateKey === 'all' ? tasks : tasks.filter((t) => getLocalDateKey(t.dueAt) === selectedDateKey);
+            const pending = scoped.filter((t) => t.status !== 'completed').sort((a, b) => a.dueAt - b.dueAt);
+            const spotlight = pending.find((t) => t.effort === 'low') || pending.find((t) => t.effort === 'medium') || pending[0];
+            const others = pending.filter((t) => t.id !== spotlight?.id);
+            const now = new Date();
+            const isLate = now.getHours() >= 21 || now.getHours() < 5;
+
+            others.forEach((t, idx) => {
+              const target = new Date(now.getTime());
+              if (isLate) {
+                target.setDate(target.getDate() + (now.getHours() >= 21 ? 1 : 0));
+                target.setHours(10 + idx, 0, 0, 0);
+              } else {
+                target.setHours(target.getHours() + 3 + idx);
+              }
+              t.dueAt = target.getTime();
+              t.snoozeCount = (t.snoozeCount || 0) + 1;
+            });
+            stats.snoozedRescued += others.length;
+            saveStats();
+            saveTasks();
+            renderAll();
+            showToast(`تم ترحيل ${others.length} مهام ثقيلة بهدوء — ركّز على خطوة دقيقتين بس 🪫`, 'amber');
+            return;
+          }
+
+          const btn = e.target.closest('button[data-action]');
+          if (!btn) return;
+          const action = btn.getAttribute('data-action');
+          const id = btn.getAttribute('data-id');
+          const task = tasks.find((t) => t.id === id);
+          if (!task) return;
+
+          if (action === 'complete') {
+            task.status = 'completed';
+            task.completedAt = Date.now();
+            saveTasks();
+            renderAll();
+            playSoftChime();
+            showToast(`كفو! أنجزت «${task.title}» 🎉`, 'emerald');
+          } else if (action === 'focus') {
+            openFocusTunnel(task.id, 2);
+          } else if (action === 'edit-time') {
+            openTimePopover(task.id, false);
+          } else if (action === 'snooze') {
+            openTimePopover(task.id, true);
+          } else if (action === 'delete') {
+            tasks = tasks.filter((t) => t.id !== id);
+            saveTasks();
+            renderAll();
+            showToast(`تم حذف «${task.title}»`, 'navy');
+          } else if (action === 'ai-breakdown') {
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span><span>جاري التقسيم الذكي...</span>';
+            const steps = await aiBreakdownTask(task);
+            task.subSteps = steps;
+            saveTasks();
+            renderAll();
+            showToast('قسّمناها لك لـ ٣ خطوات صغيرة وسهلة ✨', 'emerald');
+          } else if (action === 'toggle-substep') {
+            const idx = Number(btn.getAttribute('data-sub-index'));
+            if (task.subSteps && task.subSteps[idx]) {
+              task.subSteps[idx].done = !task.subSteps[idx].done;
+              const allDone = task.subSteps.every((s) => s.done);
+              if (allDone) {
+                task.status = 'completed';
+                task.completedAt = Date.now();
+                playSoftChime();
+                showToast(`رهيب! خلّصت الخطوات الـ ٣ وأنجزت «${task.title}» 🎉`, 'emerald');
+              }
+              saveTasks();
+              renderAll();
+            }
+          }
+        });
+
+        // أحداث تبويب الإنجازات
+        el.completedTasksList.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-action]');
+          if (!btn) return;
+          const action = btn.getAttribute('data-action');
+          const id = btn.getAttribute('data-id');
+          const task = tasks.find((t) => t.id === id);
+          if (!task) return;
+
+          if (action === 'restore') {
+            task.status = 'pending';
+            task.completedAt = null;
+            saveTasks();
+            renderAll();
+            showToast(`تمت إعادة «${task.title}» إلى الجدول`, 'navy');
+          } else if (action === 'delete') {
+            tasks = tasks.filter((t) => t.id !== id);
+            saveTasks();
+            renderAll();
+          }
+        });
+
+        el.resetDemoBtn.addEventListener('click', () => {
+          tasks = buildDemoTasks();
+          stats = { focusMinutes: 14, snoozedRescued: 2 };
+          selectedDateKey = 'all';
+          energyMode = 'normal';
+          activeNavTab = 'timeline';
+          saveTasks();
+          saveStats();
+          renderAll();
+          showToast('تمت إعادة بيانات العرض التجريبية بنجاح ✨', 'emerald');
+        });
+
+        // أحداث نافذة التفريغ السريع
+        el.closeCaptureBtn.addEventListener('click', closeCaptureSheet);
+        el.captureModal.addEventListener('click', (e) => {
+          if (e.target === el.captureModal) closeCaptureSheet();
+        });
+        el.demoFillBtn.addEventListener('click', () => {
+          el.captureTextarea.value = DEMO_BRAIN_DUMPS[demoDumpIndex];
+          demoDumpIndex = (demoDumpIndex + 1) % DEMO_BRAIN_DUMPS.length;
+          el.captureTextarea.focus();
+        });
+        document.querySelectorAll('.capture-preset').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const ms = computePresetMs(btn.getAttribute('data-capture-preset'));
+            el.captureDateInput.value = getLocalDateKey(ms);
+            el.captureTimeInput.value = getLocalTimeKey(ms);
+            el.clearCaptureTimeBtn.classList.remove('hidden');
+
+            document.querySelectorAll('.capture-preset').forEach((b) => {
+              b.setAttribute('style', 'background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);');
+            });
+            btn.setAttribute('style', 'background: var(--brand-navy); border-color: transparent; color: #FFFFFF;');
+          });
+        });
+        el.captureDateInput.addEventListener('change', () => el.clearCaptureTimeBtn.classList.remove('hidden'));
+        el.captureTimeInput.addEventListener('change', () => el.clearCaptureTimeBtn.classList.remove('hidden'));
+        el.clearCaptureTimeBtn.addEventListener('click', clearCaptureDateTime);
+        el.voiceRecordBtn.addEventListener('click', toggleSpeech);
+        el.stopVoiceInlineBtn.addEventListener('click', () => stopSpeech());
+        el.submitCaptureBtn.addEventListener('click', handleCaptureSubmit);
+
+        // أحداث نافذة المتابعة التفاعلية
+        el.closeFollowupBtn.addEventListener('click', closeFollowupModal);
+        el.followupModal.addEventListener('click', (e) => {
+          if (e.target === el.followupModal) closeFollowupModal();
+        });
+        el.followupStartBtn.addEventListener('click', () => {
+          if (activeFollowupTaskId) openFocusTunnel(activeFollowupTaskId, 2);
+        });
+        el.followupSnoozeToggleBtn.addEventListener('click', () => {
+          el.followupSnoozePanel.classList.toggle('hidden');
+        });
+        document.querySelectorAll('.followup-snooze-chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!activeFollowupTaskId) return;
+            const ms = computePresetMs(btn.getAttribute('data-followup-snooze'));
+            const id = activeFollowupTaskId;
+            closeFollowupModal();
+            applyReschedule(id, ms, true);
+          });
+        });
+        el.followupShrinkBtn.addEventListener('click', async () => {
+          const task = tasks.find((t) => t.id === activeFollowupTaskId);
+          if (!task) return;
+          el.followupShrinkBtn.disabled = true;
+          el.followupShrinkSpinner.classList.remove('hidden');
+          el.followupShrinkText.textContent = 'جاري تصغيرها لأبسط خطوة...';
+          try {
+            const res = await aiShrinkTask(task);
+            task.tinyFirstStep = res.tinyFirstStep;
+            saveTasks();
+            renderAll();
+            el.followupTaskStep.textContent = task.tinyFirstStep;
+            el.followupShrinkNote.textContent = res.note;
+            el.followupShrinkNote.classList.remove('hidden');
+          } finally {
+            el.followupShrinkBtn.disabled = false;
+            el.followupShrinkSpinner.classList.add('hidden');
+            el.followupShrinkText.textContent = 'صغّرها أكثر ⚡';
+          }
+        });
+
+        // أحداث نفق التركيز
+        el.exitFocusBtn.addEventListener('click', closeFocusTunnel);
+        document.querySelectorAll('.focus-dur-chip').forEach((chip) => {
+          chip.addEventListener('click', () => {
+            startFocusTimer(Number(chip.getAttribute('data-focus-mins')));
+          });
+        });
+        el.focusPauseToggleBtn.addEventListener('click', () => {
+          focusPaused = !focusPaused;
+          el.focusPauseToggleBtn.textContent = focusPaused ? 'استئناف ▶' : 'إيقاف مؤقت ⏸';
+          el.focusTimerStateLabel.textContent = focusPaused ? 'مؤقت متوقف' : 'ركّز على الخطوة بس';
+        });
+        el.focusStepDoneBtn.addEventListener('click', triggerFocusCelebration);
+        el.focusMarkCompleteBtn.addEventListener('click', () => {
+          const task = tasks.find((t) => t.id === activeFocusTaskId);
+          if (task) {
+            task.status = 'completed';
+            task.completedAt = Date.now();
+            saveTasks();
+            showToast(`أبدعت! أنجزت «${task.title}» بالكامل 🎉`, 'emerald');
+          }
+          closeFocusTunnel();
+        });
+        el.focusExtend5Btn.addEventListener('click', () => {
+          el.focusCelebrationStage.classList.add('hidden');
+          el.focusActiveStage.classList.remove('hidden');
+          startFocusTimer(5);
+        });
+
+        // أحداث موجز الصباح
+        el.closeBriefingBtn.addEventListener('click', closeBriefingStory);
+        el.briefingModal.addEventListener('click', (e) => {
+          if (e.target === el.briefingModal) closeBriefingStory();
+        });
+        document.querySelectorAll('.briefing-energy-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            energyMode = btn.getAttribute('data-briefing-energy');
+            activeNavTab = 'timeline';
+            showRemainingInZen = false;
+            closeBriefingStory();
+            renderAll();
+            const msgMap = {
+              high: 'وضع الإنجاز جاهز! المهام الأهم في الصدارة ⚡',
+              normal: 'تم ترتيب جدولك الزمني بسلاسة ☕',
+              low: 'هدّي بالك — جهّزنا لك مهمة وحدة صغيرة بس 🪫',
+            };
+            showToast(msgMap[energyMode], energyMode === 'high' ? 'emerald' : energyMode === 'low' ? 'coral' : 'navy');
+          });
+        });
+
+        // أحداث نافذة تعديل الوقت
+        el.closeTimePopoverBtn.addEventListener('click', closeTimePopover);
+        el.timePopoverModal.addEventListener('click', (e) => {
+          if (e.target === el.timePopoverModal) closeTimePopover();
+        });
+        document.querySelectorAll('.time-preset-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!activePopoverTaskId) return;
+            const ms = computePresetMs(btn.getAttribute('data-time-preset'));
+            const id = activePopoverTaskId;
+            const isSnooze = popoverCountsAsSnooze;
+            closeTimePopover();
+            applyReschedule(id, ms, isSnooze);
+          });
+        });
+        el.savePopoverTimeBtn.addEventListener('click', () => {
+          if (!activePopoverTaskId) return;
+          if (!el.popoverDateInput.value || !el.popoverTimeInput.value) {
+            showToast('اختر التاريخ والساعة أولاً', 'coral');
+            return;
+          }
+          const ms = combineDateAndTime(el.popoverDateInput.value, el.popoverTimeInput.value);
+          const id = activePopoverTaskId;
+          const isSnooze = popoverCountsAsSnooze;
+          closeTimePopover();
+          applyReschedule(id, ms, isSnooze);
+        });
+
+        // إغلاق النوافذ بزر Escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          closeCaptureSheet();
+          closeFollowupModal();
+          closeBriefingStory();
+          closeTimePopover();
+          if (activeFocusTaskId) closeFocusTunnel();
+        });
+      }
+
+      // =======================================================================
+      // 17. التشغيل الأولي عند تحميل الصفحة
+      // =======================================================================
+      window.addEventListener('DOMContentLoaded', () => {
+        loadState();
+        bindEvents();
+        renderAll();
+        setInterval(tickClockAndCountdowns, 1000);
+      });
+    })();
+  </script>
+</body>
+</html>
